@@ -1,1 +1,211 @@
-
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mi Diario de Salud</title>
+<style>
+:root{color-scheme:light;--bg:#f6f4ef;--cd:#fff;--tx:#1f2a2e;--tx2:#667075;--ac:#2f7d6d;--act:#fff;--bd:#e3e0d8;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--bg:#14191b;--cd:#1e2528;--tx:#e8ecec;--tx2:#97a3a6;--ac:#5fc4ae;--act:#0c1a17;--bd:#2c363a}}
+:root[data-theme="dark"]{color-scheme:dark;--bg:#14191b;--cd:#1e2528;--tx:#e8ecec;--tx2:#97a3a6;--ac:#5fc4ae;--act:#0c1a17;--bd:#2c363a}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:17px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:640px;margin:0 auto;padding:14px 14px 110px}
+h1{font-size:22px;margin:4px 0 12px}h2{font-size:17px;margin:0 0 8px}
+.c{background:var(--cd);border:1px solid var(--bd);border-radius:16px;padding:14px;margin-bottom:12px}
+.r{display:flex;gap:8px;flex-wrap:wrap}.r>*{flex:1 1 90px}
+button,input,select,textarea{font:inherit;color:inherit}
+input,select,textarea{width:100%;padding:10px;border:1px solid var(--bd);border-radius:10px;background:var(--bg);margin:3px 0}
+input[type=checkbox]{width:22px;height:22px;margin:0;flex:none}
+.b{min-height:48px;padding:8px 14px;border-radius:12px;border:1px solid var(--bd);background:var(--bg);cursor:pointer;margin:3px 0}
+.b.on,.b.p{background:var(--ac);color:var(--act);border-color:var(--ac)}
+.b.e{font-size:28px;padding:4px}.b.x{flex:0 0 48px}
+.m{color:var(--tx2);font-size:14px}
+.ck{display:flex;gap:10px;align-items:center;padding:6px 0}
+.q{border-top:1px solid var(--bd);padding:6px 0}
+.pv{font-size:14px}.pv h2{margin:10px 0 4px;font-size:15px}
+summary{cursor:pointer;padding:6px 0}
+svg.ch{width:100%;height:auto}
+nav{position:fixed;left:0;right:0;bottom:0;display:flex;background:var(--cd);border-top:1px solid var(--bd);padding-bottom:env(safe-area-inset-bottom,0px)}
+nav button{flex:1;border:0;background:none;padding:8px 2px;font-size:12px;color:var(--tx2)}
+nav button.on{color:var(--ac);font-weight:600}nav span{display:block;font-size:22px}
+</style></head><body><main id="a"></main><nav id="n"></nav>
+<script>
+const VER='1.0',K='sd1',uid=()=>Math.random().toString(36).slice(2,9),today=()=>new Date().toLocaleDateString('sv');
+const e=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fd=d=>d?d.split('-').reverse().join('/'):'';
+const defS=()=>({v:1,ficha:{nombre:'',nac:'',diag:'',alerg:'',cpap:'',otros:''},meds:[],
+specs:[['cab','Cabecera'],['neu','Neumólogo'],['tra','Traumatólogo'],['der','Dermatólogo'],['gin','Ginecólogo'],['fis','Fisio']].map(([id,n])=>({id,n})),
+pregs:[],vis:[],dias:{},medidas:[],
+segs:[['rod','Dolor de rodillas'],['hom','Dolor de hombro'],['can','Cansancio'],['res','Molestias respiratorias']].map(([id,n])=>({id,n,on:true})),
+acts:[['Caminar',60],['Fit Dance',60],['Espalda Sana',60],['Yoga',60]].map(([n,m])=>({id:uid(),n,m})),mej:[],exp:''});
+let S=defS();try{const p=JSON.parse(localStorage.getItem(K));if(p&&p.v)S=Object.assign(S,p)}catch(x){}
+const save=()=>{try{localStorage.setItem(K,JSON.stringify(S))}catch(x){}};
+let tab='hoy',sub='',cur=today(),skip=0,dopen=0,mt='peso',fe='',ie='',idays=30,goal='';
+let secs={ficha:1,meds:1,preg:1,vis:1,bien:1,dep:1,cpap:1,adh:1,med:1,det:0};
+const A=document.getElementById('a'),sn=id=>(S.specs.find(s=>s.id==id)||{n:'General'}).n;
+const so=v=>S.specs.map(s=>`<option value="${s.id}" ${s.id==v?'selected':''}>${e(s.n)}</option>`).join('');
+const f=(c,x,k,ph,t)=>`<input type="${t||'text'}" placeholder="${ph}" value="${e(x[k])}" onchange="upd('${c}','${x.id}','${k}',this.value)">`;
+const ta=(c,x,k,ph)=>`<textarea rows="2" placeholder="${ph}" onchange="upd('${c}','${x.id}','${k}',this.value)">${e(x[k])}</textarea>`;
+const ck=(c,x,k,l)=>`<label class="ck"><input type="checkbox" ${x[k]?'checked':''} onchange="upd('${c}','${x.id}','${k}',this.checked)"> ${l}</label>`;
+const upd=(c,id,k,v)=>{const o=S[c].find(x=>x.id==id);if(o){o[k]=v;save()}};
+const updr=(c,id,k,v)=>{upd(c,id,k,v);render()};
+const del=(c,id)=>{if(confirm('¿Borrar este elemento?')){S[c]=S[c].filter(x=>x.id!=id);save();render()}};
+const add=(c,o)=>{S[c].push({id:uid(),...o});save();render()};
+const go=t=>{tab=t;sub='';render();scrollTo(0,0)};
+function render(){
+ const T=[['hoy','🏠','Hoy'],['med','📈','Medidas'],['con','🩺','Consultas'],['inf','📄','Informe'],['mas','⋯','Más']];
+ document.getElementById('n').innerHTML=T.map(t=>`<button class="${tab==t[0]?'on':''}" onclick="go('${t[0]}')"><span>${t[1]}</span>${t[2]}</button>`).join('');
+ A.innerHTML=({hoy,med:vmed,con,inf,mas})[tab]();
+}
+/* ---------- HOY ---------- */
+function sd(k,v,nr){const d=S.dias[cur]=S.dias[cur]||{};if(v===null||v==='')delete d[k];else d[k]=v;if(!Object.keys(d).length)delete S.dias[cur];save();if(!nr)render()}
+const tg=(k,v)=>sd(k,((S.dias[cur]||{})[k]==v)?null:v);
+function ts(k,id){const a=[...((S.dias[cur]||{})[k]||[])],i=a.indexOf(id);i<0?a.push(id):a.splice(i,1);sd(k,a.length?a:null)}
+function ss(id,n){const o={...((S.dias[cur]||{}).seg||{})};o[id]==n?delete o[id]:o[id]=n;sd('seg',Object.keys(o).length?o:null)}
+function hoy(){
+ const d=S.dias[cur]||{},sg=S.segs.filter(s=>s.on),dm=S.meds.filter(m=>m.act&&m.dia),nm=d.nomed||[];
+ const old=!S.exp||(Date.now()-new Date(S.exp))>30*864e5,has=Object.keys(S.dias).length>3;
+ return `<h1>${cur==today()?'Hoy':'Día'} <input type="date" value="${cur}" max="${today()}" style="width:auto;font-size:15px" onchange="cur=this.value||today();render()"></h1>
+ ${old&&has?`<div class="c m" onclick="tab='mas';sub='copia';render()">💾 Hace tiempo que no haces una copia de seguridad. Toca aquí.</div>`:''}
+ <div class="c"><h2>¿Cómo te encuentras?</h2><div class="r">${['😣','😕','😐','🙂','😄'].map((x,i)=>`<button class="b e ${d.b==i+1?'on':''}" onclick="tg('b',${i+1})">${x}</button>`).join('')}</div></div>
+ <div class="c"><h2>Deporte de hoy</h2><div class="r">${S.acts.map(a=>`<button class="b ${(d.act||[]).includes(a.id)?'on':''}" onclick="ts('act','${a.id}')">${e(a.n)}</button>`).join('')||'<span class="m">Añade tus actividades en Más → Ajustes.</span>'}</div></div>
+ <div class="c"><h2>CPAP esta noche</h2><div class="r">${[['t','Toda la noche'],['p','Parcial'],['n','No la usé']].map(([k,l])=>`<button class="b ${d.cpap==k?'on':''}" onclick="tg('cpap','${k}')">${l}</button>`).join('')}</div>
+ <input type="number" step="0.5" min="0" max="14" placeholder="Horas de uso (opcional)" value="${e(d.h)}" onchange="sd('h',this.value,1)"></div>
+ ${dm.length?`<div class="c"><h2>Medicación de hoy</h2><p style="margin:0 0 6px">${nm.length?'⚠️ Sin tomar: '+nm.map(i=>e((S.meds.find(m=>m.id==i)||{}).n)).join(', '):'✅ Se asume tomada toda la habitual.'}</p><button class="b" onclick="skip=!skip;render()">Me he saltado alguna</button>${skip?`<div class="r">${dm.map(m=>`<button class="b ${nm.includes(m.id)?'on':''}" onclick="ts('nomed','${m.id}')">${e(m.n)}</button>`).join('')}</div>`:''}</div>`:''}
+ ${sg.length?`<div class="c"><details ${dopen?'open':''} ontoggle="dopen=this.open"><summary><b>Más detalle</b> <span class="m">(1 = nada, 5 = mucho)</span></summary>${sg.map(s=>`<div style="margin-top:8px">${e(s.n)}</div><div class="r">${[1,2,3,4,5].map(n=>`<button class="b ${(d.seg||{})[s.id]==n?'on':''}" onclick="ss('${s.id}',${n})">${n}</button>`).join('')}</div>`).join('')}</details></div>`:''}
+ <div class="c"><h2>Notas</h2><textarea rows="3" placeholder="Cualquier cosa que quieras recordar…" onchange="sd('nota',this.value,1)">${e(d.nota)}</textarea></div>`;
+}
+/* ---------- MEDIDAS ---------- */
+function ch(a,k){
+ if(a.length<2)return '<p class="m">Hacen falta al menos 2 medidas para ver la gráfica.</p>';
+ const ys=a.map(x=>+x[k]);let mn=Math.min(...ys),mx=Math.max(...ys);if(mn==mx){mn-=1;mx+=1}
+ const X=i=>20+i*(270/(a.length-1)),Y=v=>90-(v-mn)/(mx-mn)*72,pt=l=>l.map((v,i)=>X(i)+','+Y(v)).join(' ');
+ const sm=ys.map((_,i)=>{const w=ys.slice(Math.max(0,i-2),i+1);return w.reduce((s,v)=>s+v,0)/w.length}),t=(x,y,s,an)=>`<text x="${x}" y="${y}" font-size="9" fill="var(--tx2)" ${an?'text-anchor="end"':''}>${s}</text>`;
+ return `<svg viewBox="0 0 300 112" class="ch"><polyline points="${pt(ys)}" fill="none" stroke="var(--ac)" stroke-width="2"/>${ys.map((v,i)=>`<circle cx="${X(i)}" cy="${Y(v)}" r="3" fill="var(--ac)"/>`).join('')}${mt=='peso'?`<polyline points="${pt(sm)}" fill="none" stroke="var(--tx2)" stroke-dasharray="4 3"/>`:''}${t(2,12,mx)}${t(2,96,mn)}${t(20,109,fd(a[0].f))}${t(298,109,fd(a[a.length-1].f),1)}</svg>${mt=='peso'?'<p class="m">Línea discontinua: tendencia suavizada.</p>':mt=='ten'?'<p class="m">Gráfica de la tensión alta (sistólica).</p>':''}`;
+}
+const fm=x=>x.t=='peso'?x.v1+' kg':x.t=='ten'?x.v1+'/'+x.v2+(x.v3?' ('+x.v3+' ppm)':''):x.v1+'%'+(x.v3?' ('+x.v3+' ppm)':'');
+function vmed(){
+ const L={peso:'Peso',ten:'Tensión',sat:'Oxígeno'},a=S.medidas.filter(x=>x.t==mt).sort((p,q)=>p.f<q.f?-1:1);
+ const i=(id,ph)=>`<input id="${id}" type="number" step="0.1" placeholder="${ph}">`;
+ return `<h1>Medidas</h1><div class="r">${Object.keys(L).map(k=>`<button class="b ${mt==k?'on':''}" onclick="mt='${k}';render()">${L[k]}</button>`).join('')}</div>
+ <div class="c"><h2>Nueva medida</h2><input id="md" type="date" value="${today()}">
+ ${mt=='peso'?i('m1','Peso (kg)'):mt=='ten'?`<div class="r">${i('m1','Alta')}${i('m2','Baja')}${i('m3','Pulso')}</div>`:`<div class="r">${i('m1','Saturación %')}${i('m3','Pulso')}</div>`}
+ ${mt!='peso'?'<select id="mc"><option>En reposo</option><option>Tras ejercicio</option><option>Otro</option></select>':''}
+ <button class="b p" style="width:100%" onclick="addM()">Guardar</button></div>
+ <div class="c">${ch(a,'v1')}</div>
+ <div class="c">${[...a].reverse().slice(0,15).map(x=>`<div class="q r" style="align-items:center"><span style="flex:3 1 150px">${fd(x.f)} · <b>${fm(x)}</b> <span class="m">${e(x.c||'')}</span></span><button class="b x" onclick="del('medidas','${x.id}')">✕</button></div>`).join('')||'<p class="m">Aún no hay medidas.</p>'}</div>`;
+}
+function addM(){
+ const g=id=>(document.getElementById(id)||{}).value,v1=g('m1');if(!v1)return;
+ S.medidas.push({id:uid(),t:mt,f:g('md')||today(),v1:+v1,v2:+g('m2')||'',v3:+g('m3')||'',c:g('mc')||''});save();render();
+}
+/* ---------- CONSULTAS ---------- */
+function con(){
+ const P=S.pregs.filter(p=>!fe||p.esp==fe),pe=P.filter(p=>!p.ok),pd=P.filter(p=>p.ok),V=S.vis.filter(v=>!fe||v.esp==fe).sort((a,b)=>a.f<b.f?1:-1);
+ const last=S.specs.map(s=>{const v=S.vis.filter(x=>x.esp==s.id).sort((a,b)=>a.f<b.f?1:-1)[0];return v?`<div>${e(s.n)}: <b>${fd(v.f)}</b></div>`:''}).join('');
+ return `<h1>Consultas</h1><select onchange="fe=this.value;render()"><option value="">Todos los médicos</option>${so(fe)}</select>
+ <div class="c"><h2>Preguntas para el médico</h2><div class="r"><input id="pq" placeholder="Escribe tu duda…" style="flex:2 1 200px"><select id="pe">${so(fe||'cab')}</select></div><button class="b p" onclick="addP()">Añadir pregunta</button>
+ ${pe.map(p=>`<div class="q"><label class="ck"><input type="checkbox" onchange="updr('pregs','${p.id}','ok',true)"><span><b>${e(p.t)}</b> <span class="m">· ${e(sn(p.esp))}</span></span></label></div>`).join('')||'<p class="m">Sin preguntas pendientes.</p>'}
+ ${pd.length?`<details><summary class="m">Resueltas (${pd.length})</summary>${pd.map(p=>`<div class="q"><label class="ck"><input type="checkbox" checked onchange="updr('pregs','${p.id}','ok',false)"><span>${e(p.t)} <span class="m">· ${e(sn(p.esp))}</span></span></label>${f('pregs',p,'r','Respuesta del médico')}<button class="b" onclick="del('pregs','${p.id}')">Borrar</button></div>`).join('')}</details>`:''}</div>
+ <div class="c"><h2>Visitas</h2>${last?`<div class="m" style="margin-bottom:8px">Última visita:${last}</div>`:''}
+ <details><summary class="b" style="display:block">+ Apuntar una visita</summary><select id="ve">${so(fe||'cab')}</select><input id="vf" type="date" value="${today()}"><textarea id="vd" rows="2" placeholder="Qué me dijeron"></textarea><textarea id="vc" rows="2" placeholder="Qué cambió (medicación, pruebas…)"></textarea><input id="vp" placeholder="Próxima cita o revisión"><button class="b p" style="width:100%" onclick="addV()">Guardar visita</button></details>
+ ${V.map(v=>`<div class="q"><b>${fd(v.f)} · ${e(sn(v.esp))}</b>${v.d?`<div>${e(v.d).replace(/\n/g,'<br>')}</div>`:''}${v.c?`<div class="m">Cambios: ${e(v.c)}</div>`:''}${v.p?`<div class="m">Próxima: ${e(v.p)}</div>`:''}<button class="b" onclick="del('vis','${v.id}')">Borrar</button></div>`).join('')}</div>`;
+}
+function addP(){const t=document.getElementById('pq').value.trim();if(!t)return;add('pregs',{t,esp:document.getElementById('pe').value,ok:false,r:''})}
+function addV(){const g=id=>document.getElementById(id).value;add('vis',{esp:g('ve'),f:g('vf')||today(),d:g('vd'),c:g('vc'),p:g('vp')})}
+/* ---------- INFORME ---------- */
+const SL={ficha:'Ficha y alergias',meds:'Medicación actual',preg:'Preguntas pendientes',vis:'Última visita',bien:'Bienestar y síntomas',dep:'Deporte',cpap:'CPAP',adh:'Toma de medicación',med:'Medidas (peso, tensión, oxígeno)',det:'Detalle día a día'};
+function wrap(s,n=92){const o=[];let l='';String(s).split(' ').forEach(w=>{if((l+' '+w).trim().length>n){o.push(l);l=w}else l=(l+' '+w).trim()});o.push(l);return o}
+const avg=a=>a.length?(a.reduce((s,v)=>s+ +v,0)/a.length).toFixed(1):'-';
+function rep(){
+ const sp=S.specs.find(s=>s.id==ie),c=new Date(Date.now()-idays*864e5).toLocaleDateString('sv'),ds=Object.entries(S.dias).filter(([k])=>k>=c).sort(),I=[],F=S.ficha,sc=k=>secs[k];
+ const H=s=>{I.push({s:''});I.push({b:1,s})},P=s=>String(s).split('\n').forEach(l=>wrap(l).forEach(x=>I.push({s:x})));
+ I.push({b:1,s:'Informe de salud'+(sp?' - '+sp.n:'')});
+ P([F.nombre,F.nac&&'Nacimiento: '+fd(F.nac),'Generado: '+fd(today()),'Periodo: últimos '+idays+' días ('+ds.length+' con registro)'].filter(Boolean).join(' | '));
+ if(goal.trim()){H('Objetivo de esta consulta');P(goal)}
+ if(sc('ficha')&&(F.diag||F.alerg||F.cpap||F.otros)){H('Ficha médica');F.diag&&P('Diagnósticos: '+F.diag);F.alerg&&P('Alergias: '+F.alerg);F.cpap&&P('Presión CPAP: '+F.cpap);F.otros&&P('Otros: '+F.otros)}
+ const ms=S.meds.filter(m=>m.act);
+ if(sc('meds')&&ms.length){H('Medicación actual');ms.forEach(m=>P('- '+[m.n,m.dosis,m.motivo&&'para '+m.motivo,m.esp&&'('+sn(m.esp)+')',m.desde&&'desde '+fd(m.desde)].filter(Boolean).join(', ')))}
+ const pq=S.pregs.filter(p=>!p.ok&&(!ie||p.esp==ie));
+ if(sc('preg')&&pq.length){H('Preguntas pendientes');pq.forEach((p,i)=>P((i+1)+'. '+p.t+(ie?'':' ('+sn(p.esp)+')')))}
+ const vs=S.vis.filter(v=>!ie||v.esp==ie).sort((a,b)=>a.f<b.f?1:-1).slice(0,2);
+ if(sc('vis')&&vs.length){H('Últimas visitas');vs.forEach(v=>{P(fd(v.f)+' - '+sn(v.esp)+(v.d?': '+v.d:''));v.c&&P('Cambios: '+v.c);v.p&&P('Próxima: '+v.p)})}
+ if(sc('bien')&&ds.length){H('Bienestar y síntomas (escala 1-5)');P('Bienestar general medio (5 = mejor): '+avg(ds.map(([,d])=>d.b).filter(Boolean)));
+  S.segs.filter(s=>s.on).forEach(s=>{const v=ds.map(([,d])=>d.seg&&d.seg[s.id]).filter(Boolean);if(v.length)P(`- ${s.n}: media ${avg(v)}; ${v.filter(x=>x>=4).length} días con valor alto (4-5) de ${v.length} registrados`)})}
+ if(sc('dep')&&ds.length){H('Deporte');S.acts.forEach(a=>{const n=ds.filter(([,d])=>(d.act||[]).includes(a.id)).length;n&&P(`- ${a.n}: ${n} días`+(a.m?` (aprox. ${n*a.m} min)`:''))})}
+ const cs=ds.filter(([,d])=>d.cpap);
+ if(sc('cpap')&&cs.length){H('CPAP');const n=k=>cs.filter(([,d])=>d.cpap==k).length;P(`Noches registradas: ${cs.length}. Toda la noche: ${n('t')}; parcial: ${n('p')}; no la usó: ${n('n')}.`);const hs=cs.map(([,d])=>d.h).filter(Boolean);hs.length&&P('Horas de uso medias (cuando se anotaron): '+avg(hs)+' h')}
+ const dm=S.meds.filter(m=>m.act&&m.dia);
+ if(sc('adh')&&dm.length&&ds.length){H('Toma de medicación (autoinformada)');dm.forEach(m=>P(`- ${m.n}: olvidada ${ds.filter(([,d])=>(d.nomed||[]).includes(m.id)).length} de ${ds.length} días registrados`))}
+ const md=S.medidas.filter(x=>x.f>=c).sort((a,b)=>a.f<b.f?-1:1);
+ if(sc('med')&&md.length){H('Medidas');[['peso','Peso'],['ten','Tensión'],['sat','Oxígeno']].forEach(([t,l])=>{const a=md.filter(x=>x.t==t);a.length&&P(l+': '+a.map(x=>fd(x.f).slice(0,5)+' '+fm(x)+(x.c?' '+x.c:'')).join('; '))})}
+ if(sc('det')&&ds.length){H('Detalle día a día');ds.forEach(([k,d])=>P(fd(k).slice(0,5)+': '+[d.b&&'bienestar '+d.b,...S.segs.filter(s=>d.seg&&d.seg[s.id]).map(s=>s.n+' '+d.seg[s.id]),(d.act||[]).length&&(d.act.map(i=>(S.acts.find(a=>a.id==i)||{}).n).join(', ')),d.cpap&&'CPAP '+({t:'toda',p:'parcial',n:'no'})[d.cpap]+(d.h?' '+d.h+'h':''),d.nota].filter(Boolean).join('; ')))}
+ return I;
+}
+function inf(){
+ return `<h1>Informe para la consulta</h1><div class="c"><select onchange="ie=this.value;render()"><option value="">Todos los médicos</option>${so(ie)}</select>
+ <select onchange="idays=+this.value;render()">${[30,60,90].map(n=>`<option value="${n}" ${n==idays?'selected':''}>Últimos ${n} días</option>`).join('')}</select>
+ <textarea rows="2" placeholder="¿Qué quiero sacar de esta visita?" onchange="goal=this.value;render()">${e(goal)}</textarea>
+ <details><summary class="m">Qué incluir</summary>${Object.keys(SL).map(k=>`<label class="ck"><input type="checkbox" ${secs[k]?'checked':''} onchange="secs['${k}']=this.checked?1:0;render()"> ${SL[k]}</label>`).join('')}</details>
+ <button class="b p" style="width:100%" onclick="pdfGo()">📄 Guardar PDF</button></div>
+ <div class="c pv">${rep().map(l=>l.b?`<h2>${e(l.s)}</h2>`:`<div>${e(l.s)||'&nbsp;'}</div>`).join('')}</div>`;
+}
+const pe=s=>String(s).replace(/[‘’]/g,"'").replace(/[“”]/g,'"').replace(/[–—]/g,'-').replace(/[^\x00-\xff]/g,'?').replace(/[\\()]/g,'\\$&');
+function mkpdf(items){
+ const pg=[];let cur2=[],y=800;
+ items.forEach(it=>{const sz=it.b?12:10,ld=it.b?18:13;if(y-ld<50){pg.push(cur2);cur2=[];y=800}y-=ld;cur2.push(`BT /${it.b?'F2':'F1'} ${sz} Tf 50 ${y} Td (${pe(it.s)}) Tj ET`)});pg.push(cur2);
+ const o=[null,'<</Type/Catalog/Pages 2 0 R>>',`<</Type/Pages/Kids[${pg.map((_,i)=>(5+i*2)+' 0 R').join(' ')}]/Count ${pg.length}>>`,'<</Type/Font/Subtype/Type1/BaseFont/Helvetica/Encoding/WinAnsiEncoding>>','<</Type/Font/Subtype/Type1/BaseFont/Helvetica-Bold/Encoding/WinAnsiEncoding>>'];
+ pg.forEach((p,i)=>{const t=p.join('\n');o.push(`<</Type/Page/Parent 2 0 R/MediaBox[0 0 595 842]/Resources<</Font<</F1 3 0 R/F2 4 0 R>>>>/Contents ${6+i*2} 0 R>>`);o.push(`<</Length ${t.length}>>\nstream\n${t}\nendstream`)});
+ let s='%PDF-1.4\n';const off=[];
+ for(let i=1;i<o.length;i++){off[i]=s.length;s+=`${i} 0 obj\n${o[i]}\nendobj\n`}
+ const x=s.length;s+=`xref\n0 ${o.length}\n0000000000 65535 f \n`+off.slice(1).map(n=>String(n).padStart(10,'0')+' 00000 n \n').join('')+`trailer\n<</Size ${o.length}/Root 1 0 R>>\nstartxref\n${x}\n%%EOF`;
+ return new Blob([Uint8Array.from(s,c=>c.charCodeAt(0))],{type:'application/pdf'});
+}
+async function dl(name,data){
+ try{const d=window.claude&&await claude.use('downloads');if(!d){alert('La descarga no está disponible en esta vista.');return false}
+ await d.save({filename:name,data});return true}catch(x){if(!x||x.code!='declined')alert('No se pudo guardar el archivo.');return false}
+}
+const pdfGo=()=>dl('informe-salud-'+today()+'.pdf',mkpdf(rep()));
+/* ---------- MÁS ---------- */
+function mas(){
+ const B=(k,i,t)=>`<button class="b" style="width:100%;text-align:left" onclick="sub='${k}';render()">${i} ${t}</button>`;
+ if(!sub)return `<h1>Más</h1>${B('ficha','🪪','Ficha médica')}${B('meds','💊','Mi medicación')}${B('cfg','⚙️','Ajustes: médicos, síntomas, deportes')}${B('mej','💡','Mejoras de la app')}${B('copia','💾','Copia de seguridad')}${B('ayuda','❓','Ayuda')}<p class="m">Mi Diario de Salud · versión ${VER}</p>`;
+ return `<button class="b" onclick="sub='';render()">← Volver</button>`+({ficha,meds:vmeds,cfg,mej,copia,ayuda})[sub]();
+}
+function ficha(){
+ const F=S.ficha,i=(k,l,t)=>`<label class="m">${l}</label>${t==1?`<textarea rows="3" onchange="S.ficha.${k}=this.value;save()">${e(F[k])}</textarea>`:`<input type="${t||'text'}" value="${e(F[k])}" onchange="S.ficha.${k}=this.value;save()">`}`;
+ return `<h1>Ficha médica</h1><div class="c">${i('nombre','Nombre')}${i('nac','Fecha de nacimiento','date')}${i('diag','Diagnósticos activos',1)}${i('alerg','Alergias',1)}${i('cpap','Presión CPAP (la fija el neumólogo)')}${i('otros','Otros datos importantes',1)}</div>`;
+}
+function vmeds(){
+ return `<h1>Mi medicación</h1><p class="m">Consulta rápida: qué toma, para qué, quién lo recetó y desde cuándo.</p>${S.meds.map(m=>`<div class="c">${f('meds',m,'n','Nombre')}${f('meds',m,'dosis','Dosis y pauta (ej. 1 al día)')}${f('meds',m,'motivo','¿Para qué es?')}<select onchange="upd('meds','${m.id}','esp',this.value)"><option value="">¿Quién lo recetó?</option>${so(m.esp)}</select>
+ <div class="r"><div><span class="m">Desde</span>${f('meds',m,'desde','','date')}</div><div><span class="m">Hasta</span>${f('meds',m,'hasta','','date')}</div></div>${ta('meds',m,'nota','Notas')}${ck('meds',m,'act','En uso ahora')}${ck('meds',m,'dia','De todos los días (sale en “Hoy”)')}<button class="b" onclick="del('meds','${m.id}')">Borrar</button></div>`).join('')}
+ <button class="b p" style="width:100%" onclick="add('meds',{n:'',act:true,dia:true})">+ Añadir medicación</button>`;
+}
+function cfg(){
+ const row=(c,x,extra)=>`<div class="r" style="align-items:center">${f(c,x,'n','Nombre')}${extra||''}<button class="b x" onclick="del('${c}','${x.id}')">✕</button></div>`;
+ return `<h1>Ajustes</h1><div class="c"><h2>Médicos</h2>${S.specs.map(s=>row('specs',s)).join('')}<button class="b" onclick="add('specs',{n:''})">+ Añadir médico</button></div>
+ <div class="c"><h2>Síntomas a seguir</h2><p class="m">Actívalos o desactívalos según la época.</p>${S.segs.map(s=>row('segs',s,ck('segs',s,'on','Seguir'))).join('')}<button class="b" onclick="add('segs',{n:'',on:true})">+ Añadir síntoma</button></div>
+ <div class="c"><h2>Deportes y actividades</h2><p class="m">Minutos habituales por sesión (para los informes).</p>${S.acts.map(a=>row('acts',a,f('acts',a,'m','min','number'))).join('')}<button class="b" onclick="add('acts',{n:'',m:60})">+ Añadir actividad</button></div>`;
+}
+function mej(){
+ return `<h1>Mejoras de la app</h1><p class="m">Apunta ideas según la vayas usando y marca las ya implementadas.</p>${[...S.mej].sort((a,b)=>(a.ok?1:0)-(b.ok?1:0)).map(m=>`<div class="c" style="${m.ok?'opacity:.6':''}"><label class="ck"><input type="checkbox" ${m.ok?'checked':''} onchange="updr('mej','${m.id}','ok',this.checked)">${m.ok?'Implementada':'Pendiente'}</label><textarea rows="${Math.max(2,String(m.t).split('\n').length+1)}" onchange="upd('mej','${m.id}','t',this.value)">${e(m.t)}</textarea><button class="b" onclick="del('mej','${m.id}')">Borrar</button></div>`).join('')}<button class="b p" style="width:100%" onclick="add('mej',{t:'',ok:false})">+ Nueva idea</button>`;
+}
+function copia(){
+ return `<h1>Copia de seguridad</h1><div class="c"><p>Tus datos solo están en este dispositivo. Guarda una copia de vez en cuando (por ejemplo, una vez al mes) y envíatela por correo o guárdala en tu nube.</p><p class="m">Última copia: ${S.exp?fd(S.exp):'nunca'}</p><button class="b p" onclick="expo()">⬇️ Exportar datos (JSON)</button></div>
+ <div class="c"><h2>Importar</h2><p class="m">Sustituye todos los datos actuales por los del archivo.</p><input type="file" accept=".json,application/json" onchange="impo(this.files[0])"><details><summary class="m">¿No funciona? Pegar el contenido</summary><textarea id="pj" rows="4"></textarea><button class="b" onclick="impt(document.getElementById('pj').value)">Importar texto</button></details></div>`;
+}
+async function expo(){if(await dl('diario-salud-'+today()+'.json',JSON.stringify(S,null,1))){S.exp=today();save();render()}}
+const impo=f=>f&&f.text().then(impt);
+function impt(t){try{const p=JSON.parse(t);if(!p.v||!p.dias)throw 0;if(confirm('Se sustituirán todos los datos actuales. ¿Continuar?')){S=Object.assign(defS(),p);save();render();alert('Datos importados')}}catch(x){alert('El archivo no es válido.')}}
+function ayuda(){
+ const D=(t,b)=>`<details class="c"><summary><b>${t}</b></summary>${b}</details>`;
+ return `<h1>Ayuda</h1>${D('Cómo empezar','<p>1) Rellena la <b>Ficha médica</b> y <b>Mi medicación</b> (Más). 2) Cada día, en <b>Hoy</b>, toca cómo te encuentras y lo que hayas hecho: son unos segundos. 3) Antes de ir al médico, abre <b>Informe</b>.</p>')}
+ ${D('Hoy','<p>Todo se guarda al tocar. Para corregir otro día, cambia la fecha de arriba. La medicación se da por tomada: solo marca lo que se te olvide. Si no registras un día, no pasa nada.</p>')}
+ ${D('Medidas','<p>Apunta el peso, la tensión o el oxígeno solo cuando los midas. En tensión y oxígeno indica si fue en reposo o tras ejercicio.</p>')}
+ ${D('Consultas','<p>Apunta dudas según se te ocurran y márcalas al resolverlas; las no resueltas pasan a la siguiente visita. Tras la consulta, apunta qué dijo el médico en <b>Visitas</b>.</p>')}
+ ${D('Informe en PDF','<p>Elige el médico y el periodo, escribe qué quieres sacar de la visita y pulsa <b>Guardar PDF</b>. En “Qué incluir” puedes quitar o añadir apartados.</p>')}
+ ${D('Ajustes','<p>En Más → Ajustes puedes cambiar los médicos, activar o desactivar síntomas y editar tus deportes.</p>')}
+ ${D('Importante: copia de seguridad','<p>Los datos se guardan en el navegador de este dispositivo. En iPhone, Safari puede borrarlos si no se usa durante semanas. Exporta una copia cada mes (Más → Copia de seguridad).</p>')}`;
+}
+render();
+</script></body></html>
