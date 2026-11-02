@@ -3,9 +3,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Mi Diario de Salud</title>
 <style>
-:root{color-scheme:light;--bg:#f6f4ef;--cd:#fff;--tx:#1f2a2e;--tx2:#667075;--ac:#2f7d6d;--act:#fff;--bd:#e3e0d8;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--bg:#14191b;--cd:#1e2528;--tx:#e8ecec;--tx2:#97a3a6;--ac:#5fc4ae;--act:#0c1a17;--bd:#2c363a}}
-:root[data-theme="dark"]{color-scheme:dark;--bg:#14191b;--cd:#1e2528;--tx:#e8ecec;--tx2:#97a3a6;--ac:#5fc4ae;--act:#0c1a17;--bd:#2c363a}
+:root{color-scheme:light;--bg:#f6f4ef;--cd:#fff;--tx:#1f2a2e;--tx2:#667075;--ac:#2f7d6d;--act:#fff;--bd:#e3e0d8;--l1:#1d4e9e;--l2:#7b3fb0;--l3:#b3265a;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--bg:#14191b;--cd:#1e2528;--tx:#e8ecec;--tx2:#97a3a6;--ac:#5fc4ae;--act:#0c1a17;--bd:#2c363a;--l1:#7fb2ff;--l2:#c39bff;--l3:#ff8fb3}}
+:root[data-theme="dark"]{color-scheme:dark;--bg:#14191b;--cd:#1e2528;--tx:#e8ecec;--tx2:#97a3a6;--ac:#5fc4ae;--act:#0c1a17;--bd:#2c363a;--l1:#7fb2ff;--l2:#c39bff;--l3:#ff8fb3}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--tx);font:17px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
@@ -22,9 +22,9 @@ input[type=checkbox]{width:22px;height:22px;margin:0;flex:none}
 .m{color:var(--tx2);font-size:14px}
 .ck{display:flex;gap:10px;align-items:center;padding:6px 0}
 .q{border-top:1px solid var(--bd);padding:6px 0}
-.pv{font-size:14px}.pv h2{margin:10px 0 4px;font-size:15px}
+.pv{font-size:14px}.pv h2{margin:10px 0 4px;font-size:15px}.pv h3{margin:2px 0 4px;font-size:15px;text-decoration:underline;text-underline-offset:3px}.pv svg.ch{margin:4px 0 8px}
 summary{cursor:pointer;padding:6px 0}
-svg.ch{width:100%;height:auto}
+svg.ch{width:100%;height:auto;display:block;max-width:560px;margin:0 auto}
 nav{position:fixed;left:0;right:0;bottom:0;display:flex;background:var(--cd);border-top:1px solid var(--bd);padding-bottom:env(safe-area-inset-bottom,0px)}
 nav button{flex:1;border:0;background:none;padding:8px 2px;font-size:12px;color:var(--tx2)}
 nav button.on{color:var(--ac);font-weight:600}nav span{display:block;font-size:22px}
@@ -35,7 +35,7 @@ textarea{resize:vertical;min-height:64px}
 .mc{cursor:pointer;padding:10px}.mc.off{opacity:.6}
 </style></head><body><main id="a"></main><nav id="n"></nav>
 <script>
-const VER='1.1',K='sd1',uid=()=>Math.random().toString(36).slice(2,9),today=()=>new Date().toLocaleDateString('sv');
+const VER='1.2',K='sd1',uid=()=>Math.random().toString(36).slice(2,9),today=()=>new Date().toLocaleDateString('sv');
 const e=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const fd=d=>d?d.split('-').reverse().join('/'):'';
 const defS=()=>({v:1,ficha:{nombre:'',nac:'',diag:'',alerg:'',cpap:'',otros:''},meds:[],
@@ -83,13 +83,49 @@ function hoy(){
  <div class="c"><h2>Notas</h2><textarea rows="3" placeholder="Cualquier cosa que quieras recordar…" onchange="sd('nota',this.value,1)">${e(d.nota)}</textarea></div>`;
 }
 /* ---------- MEDIDAS ---------- */
-function ch(a,k){
- if(a.length<2)return '<p class="m">Hacen falta al menos 2 medidas para ver la gráfica.</p>';
- const ys=a.map(x=>+x[k]);let mn=Math.min(...ys),mx=Math.max(...ys);if(mn==mx){mn-=1;mx+=1}
- const X=i=>20+i*(270/(a.length-1)),Y=v=>90-(v-mn)/(mx-mn)*72,pt=l=>l.map((v,i)=>X(i)+','+Y(v)).join(' ');
- const sm=ys.map((_,i)=>{const w=ys.slice(Math.max(0,i-2),i+1);return w.reduce((s,v)=>s+v,0)/w.length}),t=(x,y,s,an)=>`<text x="${x}" y="${y}" font-size="9" fill="var(--tx2)" ${an?'text-anchor="end"':''}>${s}</text>`;
- return `<svg viewBox="0 0 300 112" class="ch"><polyline points="${pt(ys)}" fill="none" stroke="var(--ac)" stroke-width="2"/>${ys.map((v,i)=>`<circle cx="${X(i)}" cy="${Y(v)}" r="3" fill="var(--ac)"/>`).join('')}${mt=='peso'?`<polyline points="${pt(sm)}" fill="none" stroke="var(--tx2)" stroke-dasharray="4 3"/>`:''}${t(2,12,mx)}${t(2,96,mn)}${t(20,109,fd(a[0].f))}${t(298,109,fd(a[a.length-1].f),1)}</svg>${mt=='peso'?'<p class="m">Línea discontinua: tendencia suavizada.</p>':mt=='ten'?'<p class="m">Gráfica de la tensión alta (sistólica).</p>':''}`;
+/* Motor de gráficas: se dibuja con primitivas que sirven para SVG (pantalla) y PDF */
+const PAL={tx:['var(--tx)','#1f2a2e'],t2:['var(--tx2)','#667075'],bd:['var(--bd)','#d9d6cc'],ac:['var(--ac)','#2f7d6d'],l1:['var(--l1)','#1d4e9e'],l2:['var(--l2)','#7b3fb0'],l3:['var(--l3)','#b3265a'],g1:['#2e9e6b','#2e9e6b'],g2:['#8bc34a','#8bc34a'],y:['#f2c230','#f2c230'],o:['#f08a24','#f08a24'],r:['#d9433b','#d9433b'],b:['#4a90d9','#4a90d9']};
+const DOT=[.5,3.2],BTA=[[null,120,'g1','Óptima <120'],[120,130,'g2','Normal 120-129'],[130,140,'y','Normal-alta 130-139'],[140,160,'o','Alta 140-159'],[160,null,'r','Muy alta 160+']],
+BTB=[[null,80,'g1','Óptima <80'],[80,85,'g2','Normal 80-84'],[85,90,'y','Normal-alta 85-89'],[90,100,'o','Alta 90-99'],[100,null,'r','Muy alta 100+']],
+BSA=[[null,90,'r','Peligro <90'],[90,95,'y','Vigilar 90-94'],[95,null,'g1','Normal 95-100']],BPU=[[60,100,'g1','Normal en reposo 60-100']];
+const CHS={peso:[{ttl:'Peso (kg)',k:'v1',nm:'Peso',c:'ac',pad:.5}],
+ ten:[{ttl:'Tensión alta - sistólica (mmHg)',k:'v1',nm:'Alta',c:'l1',pad:5,bands:BTA},{ttl:'Tensión baja - diastólica (mmHg)',k:'v2',nm:'Baja',c:'l2',pad:5,bands:BTB},{ttl:'Pulso (ppm)',k:'v3',nm:'Pulso',c:'l3',pad:5,bands:BPU}],
+ sat:[{ttl:'Saturación de oxígeno (%)',k:'v1',nm:'Saturación',c:'l1',pad:1,cap:100,bands:BSA},{ttl:'Pulso (ppm)',k:'v3',nm:'Pulso',c:'l3',pad:5,bands:BPU}]};
+function cm(o){
+ const pts=o.a.filter(x=>x[o.k]!==''&&x[o.k]!=null&&!isNaN(+x[o.k])).map(x=>({f:x.f,v:+x[o.k]})),n=pts.length;
+ if(n<2)return null;
+ const W=320,L=32,R=314,T=20,PH=110,B=T+PH,ys=pts.map(p=>p.v),P=[];
+ const sm=ys.map((_,i)=>{const w=ys.slice(Math.max(0,i-2),i+1);return w.reduce((s,v)=>s+v,0)/w.length});
+ let lo=Math.min(...ys,...sm),hi=Math.max(...ys,...sm);const pad=Math.max((hi-lo)*.15,o.pad);lo-=pad;hi+=pad;
+ const st=[.5,1,2,5,10,20,50,100].find(q=>(hi-lo)/q<=5)||100;
+ lo=Math.floor(lo/st)*st;hi=Math.ceil(hi/st)*st;if(o.cap!=null)hi=Math.min(hi,o.cap);
+ const Y=v=>B-(v-lo)/(hi-lo)*PH,X=i=>L+6+i*(R-L-12)/(n-1);
+ P.push({t:'x',x:2,y:11,s:o.ttl,z:10,b:1,c:'tx'});
+ const vis=[];(o.bands||[]).forEach(([a,b,c,l])=>{const u=Math.max(a==null?-1e9:a,lo),w=Math.min(b==null?1e9:b,hi);if(u<w){P.push({t:'r',x:L,y:Y(w),w:R-L,h:Y(u)-Y(w),c,a:.22});vis.push([c,l])}});
+ for(let i=0;lo+i*st<=hi+1e-9;i++){const v=lo+i*st;P.push({t:'l',x1:L,y1:Y(v),x2:R,y2:Y(v),c:'bd',w:.5});P.push({t:'x',x:L-3,y:Y(v)+3,s:String(+v.toFixed(1)),z:8,c:'t2',an:'e'})}
+ P.push({t:'p',pts:ys.map((v,i)=>[X(i),Y(v)]),c:o.c,w:1.8});
+ if(n<=60)ys.forEach((v,i)=>P.push({t:'c',x:X(i),y:Y(v),r:n<=30?2.6:1.8,c:o.c}));
+ if(n>=3)P.push({t:'p',pts:sm.map((v,i)=>[X(i),Y(v)]),c:'tx',w:1.6,d:DOT});
+ P.push({t:'x',x:L,y:B+12,s:fd(pts[0].f),z:8,c:'t2'});P.push({t:'x',x:R,y:B+12,s:fd(pts[n-1].f),z:8,c:'t2',an:'e'});
+ if(n>=5)P.push({t:'x',x:X(Math.floor((n-1)/2)),y:B+12,s:fd(pts[Math.floor((n-1)/2)].f),z:8,c:'t2',an:'m'});
+ const lg=[['line',o.c,o.nm]];if(n>=3)lg.push(['dot','tx','Media móvil (3 medidas)']);vis.forEach(([c,l])=>lg.push(['band',c,l]));
+ let x=2,y=B+22;
+ lg.forEach(([k,c,l])=>{const w=18+l.length*4.4;if(x>2&&x+w>W-2){x=2;y+=12}
+  if(k=='line'){P.push({t:'l',x1:x,y1:y+4,x2:x+13,y2:y+4,c,w:1.8});P.push({t:'c',x:x+6.5,y:y+4,r:2.2,c})}
+  else if(k=='dot')P.push({t:'l',x1:x,y1:y+4,x2:x+13,y2:y+4,c,w:1.6,d:DOT});
+  else P.push({t:'r',x,y:y-.5,w:10,h:9,c,a:.45});
+  P.push({t:'x',x:x+16,y:y+7,s:l,z:8,c:'t2'});x+=w});
+ return {W,H:y+14,P,ttl:o.ttl};
 }
+const nn=v=>(+v).toFixed(1);
+const primSvg=p=>{const c=PAL[p.c][0],da=p.d?` stroke-dasharray="${p.d.join(' ')}"`:'';
+ if(p.t=='r')return `<rect x="${nn(p.x)}" y="${nn(p.y)}" width="${nn(p.w)}" height="${nn(p.h)}" fill="${c}" fill-opacity="${p.a}"/>`;
+ if(p.t=='l')return `<line x1="${nn(p.x1)}" y1="${nn(p.y1)}" x2="${nn(p.x2)}" y2="${nn(p.y2)}" stroke="${c}" stroke-width="${p.w}" stroke-linecap="round"${da}/>`;
+ if(p.t=='p')return `<polyline points="${p.pts.map(q=>nn(q[0])+','+nn(q[1])).join(' ')}" fill="none" stroke="${c}" stroke-width="${p.w}" stroke-linecap="round" stroke-linejoin="round"${da}/>`;
+ if(p.t=='c')return `<circle cx="${nn(p.x)}" cy="${nn(p.y)}" r="${p.r}" fill="${c}"/>`;
+ return `<text x="${nn(p.x)}" y="${nn(p.y)}" font-size="${p.z}" fill="${c}"${p.b?' font-weight="700"':''}${p.an=='e'?' text-anchor="end"':p.an=='m'?' text-anchor="middle"':''}>${e(p.s)}</text>`};
+const svgOf=m=>`<svg viewBox="0 0 ${m.W} ${nn(m.H)}" class="ch" role="img" aria-label="${e(m.ttl)}">${m.P.map(primSvg).join('')}</svg>`;
+const charts=(t,a)=>CHS[t].map(o=>({o,m:cm({...o,a})}));
 const fm=x=>x.t=='peso'?x.v1+' kg':x.t=='ten'?x.v1+'/'+x.v2+(x.v3?' ('+x.v3+' ppm)':''):x.v1+'%'+(x.v3?' ('+x.v3+' ppm)':'');
 function vmed(){
  const L={peso:'Peso',ten:'Tensión',sat:'Oxígeno'},a=S.medidas.filter(x=>x.t==mt).sort((p,q)=>p.f<q.f?-1:1);
@@ -99,7 +135,7 @@ function vmed(){
  ${mt=='peso'?i('m1','Peso (kg)'):mt=='ten'?`<div class="r">${i('m1','Alta')}${i('m2','Baja')}${i('m3','Pulso')}</div>`:`<div class="r">${i('m1','Saturación %')}${i('m3','Pulso')}</div>`}
  ${mt!='peso'?'<select id="mc"><option>En reposo</option><option>Tras ejercicio</option><option>Otro</option></select>':''}
  <button class="b p" style="width:100%" onclick="addM()">Guardar</button></div>
- <div class="c">${ch(a,'v1')}</div>
+ ${charts(mt,a).map(({o,m})=>`<div class="c">${m?svgOf(m):`<p class="m"><b>${e(o.ttl)}</b>: hacen falta al menos 2 medidas con este dato para ver la gráfica.</p>`}</div>`).join('')}${mt!='peso'?'<p class="m">Las franjas de colores son referencias generales; si tu médico te ha marcado otros objetivos, valen los suyos. Línea de puntos: media móvil.</p>':'<p class="m">Línea de puntos: media móvil (promedio de las últimas 3 medidas).</p>'}
  <div class="c">${[...a].reverse().slice(0,15).map(x=>`<div class="q r" style="align-items:center"><span style="flex:3 1 150px">${fd(x.f)} · <b>${fm(x)}</b> <span class="m">${e(x.c||'')}</span></span><button class="b x" onclick="del('medidas','${x.id}')">✕</button></div>`).join('')||'<p class="m">Aún no hay medidas.</p>'}</div>`;
 }
 function addM(){
@@ -111,7 +147,7 @@ function con(){
  const P=S.pregs.filter(p=>!fe||p.esp==fe),pe=P.filter(p=>!p.ok),pd=P.filter(p=>p.ok),V=S.vis.filter(v=>!fe||v.esp==fe).sort((a,b)=>a.f<b.f?1:-1);
  const last=S.specs.map(s=>{const v=S.vis.filter(x=>x.esp==s.id).sort((a,b)=>a.f<b.f?1:-1)[0];return v?`<div>${e(s.n)}: <b>${fd(v.f)}</b></div>`:''}).join('');
  return `<h1>Consultas</h1><select onchange="fe=this.value;render()"><option value="">Todos los médicos</option>${so(fe)}</select>
- <div class="c"><h2>Preguntas para el médico</h2><div class="r"><textarea id="pq" rows="3" placeholder="Escribe tu duda…" style="flex:2 1 200px"></textarea><select id="pe">${so(fe||'cab')}</select></div><button class="b p" onclick="addP()">Añadir pregunta</button>
+ <div class="c"><h2>Preguntas para el médico</h2><label class="m" for="pe">¿Para qué médico?</label><select id="pe">${so(fe||'cab')}</select><textarea id="pq" rows="4" placeholder="Escribe tu duda…"></textarea><button class="b p" style="width:100%" onclick="addP()">Añadir pregunta</button>
  ${pe.map(p=>`<div class="q"><label class="ck"><input type="checkbox" onchange="updr('pregs','${p.id}','ok',true)"><span><b>${br(p.t)}</b> <span class="m">· ${e(sn(p.esp))}</span></span></label></div>`).join('')||'<p class="m">Sin preguntas pendientes.</p>'}
  ${pd.length?`<details><summary class="m">Resueltas (${pd.length})</summary>${pd.map(p=>`<div class="q"><label class="ck"><input type="checkbox" checked onchange="updr('pregs','${p.id}','ok',false)"><span>${br(p.t)} <span class="m">· ${e(sn(p.esp))}</span></span></label>${ta('pregs',p,'r','Respuesta del médico')}<button class="b" onclick="del('pregs','${p.id}')">Borrar</button></div>`).join('')}</details>`:''}</div>
  ${citasCard()}<div class="c"><h2>Visitas</h2>${last?`<div class="m" style="margin-bottom:8px">Última visita:${last}</div>`:''}
@@ -146,7 +182,7 @@ function rep(){
  const dm=S.meds.filter(m=>m.act&&m.dia);
  if(sc('adh')&&dm.length&&ds.length){H('Toma de medicación (autoinformada)');dm.forEach(m=>P(`- ${m.n}: olvidada ${ds.filter(([,d])=>(d.nomed||[]).includes(m.id)).length} de ${ds.length} días registrados`))}
  const md=S.medidas.filter(x=>x.f>=c).sort((a,b)=>a.f<b.f?-1:1);
- if(sc('med')&&md.length){H('Medidas');[['peso','Peso'],['ten','Tensión'],['sat','Oxígeno']].forEach(([t,l])=>{const a=md.filter(x=>x.t==t);a.length&&P(l+': '+a.map(x=>fd(x.f).slice(0,5)+' '+fm(x)+(x.c?' '+x.c:'')).join('; '))})}
+ if(sc('med')&&md.length){H('Medidas');[['peso','Peso'],['ten','Tensión'],['sat','Oxígeno']].forEach(([t,l])=>{const a=md.filter(x=>x.t==t);if(!a.length)return;I.push({s:''});I.push({b:1,u:1,s:l});charts(t,a).forEach(({m})=>m&&I.push({ch:m}));I.push({ms:a.map(x=>fd(x.f).slice(0,5)+' '+fm(x)+(x.c?' '+x.c:''))})})}
  if(sc('det')&&ds.length>92){H('Resumen por meses (periodo largo)');const mo={};ds.forEach(([k,d])=>{(mo[k.slice(0,7)]=mo[k.slice(0,7)]||[]).push(d)});Object.keys(mo).sort().forEach(m=>P(m.split('-').reverse().join('/')+': '+mo[m].length+' días registrados; bienestar medio '+avg(mo[m].map(d=>d.b).filter(Boolean))+'; deporte '+mo[m].filter(d=>(d.act||[]).length).length+' días'))}
  if(sc('det')&&ds.length&&ds.length<=92){H('Detalle día a día');ds.forEach(([k,d])=>P(fd(k).slice(0,5)+': '+[d.b&&'bienestar '+d.b,...S.segs.filter(s=>d.seg&&d.seg[s.id]).map(s=>s.n+' '+d.seg[s.id]),(d.act||[]).length&&(d.act.map(i=>(S.acts.find(a=>a.id==i)||{}).n).join(', ')),d.cpap&&'CPAP '+({t:'toda',p:'parcial',n:'no'})[d.cpap]+(d.h?' '+d.h+'h':''),d.nota].filter(Boolean).join('; ')))}
  return I;
@@ -157,12 +193,27 @@ function inf(){
  <textarea rows="2" placeholder="¿Qué quiero sacar de esta visita?" onchange="goal=this.value;render()">${e(goal)}</textarea>
  <details><summary class="m">Qué incluir</summary>${Object.keys(SL).map(k=>`<label class="ck"><input type="checkbox" ${secs[k]?'checked':''} onchange="secs['${k}']=this.checked?1:0;render()"> ${SL[k]}</label>`).join('')}</details>
  <button class="b p" style="width:100%" onclick="pdfGo()">📄 Guardar PDF</button></div>
- <div class="c pv">${rep().map(l=>l.b?`<h2>${e(l.s)}</h2>`:`<div>${e(l.s)||'&nbsp;'}</div>`).join('')}</div>`;
+ <div class="c pv">${rep().map(l=>l.ch?svgOf(l.ch):l.ms?`<div>${l.ms.map(x=>`<span style="white-space:nowrap">${e(x)}</span>`).join(' <span class="m">|</span> ')}</div>`:l.b?(l.u?`<h3>${e(l.s)}</h3>`:`<h2>${e(l.s)}</h2>`):`<div>${e(l.s)||'&nbsp;'}</div>`).join('')}</div>`;
 }
 const pe=s=>String(s).replace(/[‘’]/g,"'").replace(/[“”]/g,'"').replace(/[–—]/g,'-').replace(/[^\x00-\xff]/g,'?').replace(/[\\()]/g,'\\$&');
+const hx=h=>[1,3,5].map(i=>parseInt(h.substr(i,2),16)/255),rgb=(h,a)=>hx(h).map(v=>(a==null?v:1-(1-v)*a).toFixed(3)).join(' ');
+function primPdf(p,x0,y0,k){
+ const X=x=>x0+x*k,Y=y=>y0-y*k,f=v=>v.toFixed(2),hc=PAL[p.c][1];let o;
+ if(p.t=='r')o=`${rgb(hc,p.a)} rg ${f(X(p.x))} ${f(Y(p.y+p.h))} ${f(p.w*k)} ${f(p.h*k)} re f`;
+ else if(p.t=='l'||p.t=='p'){const q=p.t=='l'?[[p.x1,p.y1],[p.x2,p.y2]]:p.pts;o=`${f(p.w*k)} w 1 J 1 j ${p.d?'['+p.d.map(v=>f(v*k)).join(' ')+'] 0 d ':''}${rgb(hc)} RG ${q.map((z,i)=>f(X(z[0]))+' '+f(Y(z[1]))+(i?' l':' m')).join(' ')} S`}
+ else if(p.t=='c'){const r=p.r*k,cx=X(p.x),cy=Y(p.y),q=r*.5523;o=`${rgb(hc)} rg ${f(cx+r)} ${f(cy)} m ${f(cx+r)} ${f(cy+q)} ${f(cx+q)} ${f(cy+r)} ${f(cx)} ${f(cy+r)} c ${f(cx-q)} ${f(cy+r)} ${f(cx-r)} ${f(cy+q)} ${f(cx-r)} ${f(cy)} c ${f(cx-r)} ${f(cy-q)} ${f(cx-q)} ${f(cy-r)} ${f(cx)} ${f(cy-r)} c ${f(cx+q)} ${f(cy-r)} ${f(cx+r)} ${f(cy-q)} ${f(cx+r)} ${f(cy)} c f`}
+ else{const w=p.s.length*p.z*.54,x=p.an=='e'?p.x-w:p.an=='m'?p.x-w/2:p.x;o=`${rgb(hc)} rg BT /${p.b?'F2':'F1'} ${f(p.z*k)} Tf ${f(X(x))} ${f(Y(p.y))} Td (${pe(p.s)}) Tj ET`}
+ return 'q '+o+' Q';
+}
 function mkpdf(items){
- const pg=[];let cur2=[],y=800;
- items.forEach(it=>{const sz=it.b?12:10,ld=it.b?18:13;if(y-ld<50){pg.push(cur2);cur2=[];y=800}y-=ld;cur2.push(`BT /${it.b?'F2':'F1'} ${sz} Tf 50 ${y} Td (${pe(it.s)}) Tj ET`)});pg.push(cur2);
+ const pg=[];let cur2=[],y=800;const K=1.2,ex=[];
+ items.forEach(it=>{if(it.ms){let l='';it.ms.forEach(x=>{const t=l?l+'  |  '+x:x;if(l&&t.length>92){ex.push({s:l});l=x}else l=t});l&&ex.push({s:l})}else ex.push(it)});
+ ex.forEach((it,i)=>{
+  if(it.ch){const h=it.ch.H*K+10;if(y-h<50){pg.push(cur2);cur2=[];y=800}const top=y-4;y-=h;it.ch.P.forEach(p=>cur2.push(primPdf(p,50,top,K)));return}
+  const sz=it.b?(it.u?11:12):10,ld=it.b?(it.u?16:18):13,nx=ex[i+1],need=ld+(it.u&&nx&&nx.ch?nx.ch.H*K+10:0);
+  if(y-need<50){pg.push(cur2);cur2=[];y=800}
+  y-=ld;cur2.push(`0 g BT /${it.b?'F2':'F1'} ${sz} Tf 50 ${y} Td (${pe(it.s)}) Tj ET`);
+  if(it.u)cur2.push(`q 0.8 w 0 G 50 ${y-3} m ${(50+it.s.length*sz*.56).toFixed(1)} ${y-3} l S Q`)});pg.push(cur2);
  const o=[null,'<</Type/Catalog/Pages 2 0 R>>',`<</Type/Pages/Kids[${pg.map((_,i)=>(5+i*2)+' 0 R').join(' ')}]/Count ${pg.length}>>`,'<</Type/Font/Subtype/Type1/BaseFont/Helvetica/Encoding/WinAnsiEncoding>>','<</Type/Font/Subtype/Type1/BaseFont/Helvetica-Bold/Encoding/WinAnsiEncoding>>'];
  pg.forEach((p,i)=>{const t=p.join('\n');o.push(`<</Type/Page/Parent 2 0 R/MediaBox[0 0 595 842]/Resources<</Font<</F1 3 0 R/F2 4 0 R>>>>/Contents ${6+i*2} 0 R>>`);o.push(`<</Length ${t.length}>>\nstream\n${t}\nendstream`)});
  let s='%PDF-1.4\n';const off=[];
@@ -240,9 +291,9 @@ function ayuda(){
  const D=(t,b)=>`<details class="c"><summary><b>${t}</b></summary>${b}</details>`;
  return `<h1>Ayuda</h1>${D('Cómo empezar','<p>1) Rellena la <b>Ficha médica</b> y <b>Mi medicación</b> (Más). 2) Cada día, en <b>Hoy</b>, toca cómo te encuentras y lo que hayas hecho: son unos segundos. 3) Antes de ir al médico, abre <b>Informe</b>.</p>')}
  ${D('Hoy','<p>Todo se guarda al tocar. Para corregir otro día, cambia la fecha de arriba. La medicación se da por tomada: solo marca lo que se te olvide. Si no registras un día, no pasa nada.</p>')}
- ${D('Medidas','<p>Apunta el peso, la tensión o el oxígeno solo cuando los midas. En tensión y oxígeno indica si fue en reposo o tras ejercicio.</p>')}
- ${D('Consultas','<p>Apunta dudas según se te ocurran y márcalas al resolverlas; las no resueltas pasan a la siguiente visita. Tras la consulta, apunta qué dijo el médico en <b>Visitas</b>.</p>')}
- ${D('Informe en PDF','<p>Elige el médico y el periodo (últimos días, desde una fecha o desde la última visita), escribe qué quieres sacar de la visita y pulsa <b>Guardar PDF</b>. En “Qué incluir” puedes quitar o añadir apartados.</p>')}
+ ${D('Medidas','<p>Apunta el peso, la tensión o el oxígeno solo cuando los midas. En tensión y oxígeno indica si fue en reposo o tras ejercicio. El pulso es opcional.</p><p><b>Gráficas:</b> el peso tiene una; la tensión tiene tres (alta, baja y pulso) y el oxígeno dos (saturación y pulso). Cada una lleva su leyenda debajo. La <b>línea de puntos</b> es la media móvil (promedio de las últimas 3 medidas): enseña la tendencia sin que un día aislado despiste.</p><p><b>Franjas de colores:</b> en tensión, verde = óptima, verde claro = normal, amarillo = normal-alta, naranja = alta y rojo = muy alta. En oxígeno, verde = normal (95 o más), amarillo = vigilar (90-94) y rojo = peligro (menos de 90). En el pulso se marca la franja normal en reposo (60-100). Son referencias generales: si tu médico o neumólogo te ha fijado otros objetivos, valen los suyos. Si te sale en rojo y te encuentras mal, pide ayuda médica.</p>')}
+ ${D('Consultas','<p>Para apuntar una duda, elige primero el médico y escribe la pregunta debajo. Apunta dudas según se te ocurran y márcalas al resolverlas; las no resueltas pasan a la siguiente visita. Tras la consulta, apunta qué dijo el médico en <b>Visitas</b>.</p>')}
+ ${D('Informe en PDF','<p>Elige el médico y el periodo (últimos días, desde una fecha o desde la última visita), escribe qué quieres sacar de la visita y pulsa <b>Guardar PDF</b>. En “Qué incluir” puedes quitar o añadir apartados.</p><p>En el apartado de medidas, el informe separa <b>Peso</b>, <b>Tensión</b> y <b>Oxígeno</b> (cada uno con su título subrayado), muestra sus gráficas del periodo elegido y lista las medidas sin cortarlas a mitad.</p>')}
  ${D('Ajustes','<p>En Más → Ajustes puedes cambiar los médicos, activar o desactivar síntomas y editar tus deportes.</p>')}
  ${D('Importante: copia de seguridad','<p>Los datos se guardan en el navegador de este dispositivo. En iPhone, Safari puede borrarlos si no se usa durante semanas. Exporta una copia cada mes (Más → Copia de seguridad).</p>')}`;
 }
