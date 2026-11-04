@@ -1,1 +1,111 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prueba MP3 locales</title>
+<style>
+  body{font-family:system-ui,sans-serif;max-width:640px;margin:0 auto;padding:16px;line-height:1.4}
+  h1{font-size:20px}
+  button,label.btn{display:block;width:100%;box-sizing:border-box;padding:14px;margin:8px 0;font-size:16px;
+    border:1px solid #888;border-radius:10px;background:#eee;color:#000;text-align:center;cursor:pointer}
+  input[type=file]{display:none}
+  pre{background:#111;color:#7CFC7C;padding:10px;border-radius:8px;white-space:pre-wrap;font-size:13px;min-height:60px}
+  audio{width:100%;margin-top:8px}
+  small{color:#666}
+</style>
+</head>
+<body>
+<h1>Prueba de MP3 locales</h1>
+<small>Página independiente: no toca tu app de música. Solo usa una clave de localStorage llamada pruebaMp3_fichas.</small>
 
+<label class="btn">1. Elegir archivos (selección múltiple)
+  <input type="file" id="f1" multiple accept="audio/*,.mp3,.m4a,.flac,.ogg,.wav">
+</label>
+<label class="btn">2. Elegir carpeta (webkitdirectory)
+  <input type="file" id="f2" webkitdirectory multiple>
+</label>
+<button id="bPlay">3. Reproducir una al azar</button>
+<button id="bSave">4. Guardar fichas (nombre + tamaño)</button>
+<button id="bCheck">5. Comprobar reasociación</button>
+<button id="bClear">Borrar datos de la prueba</button>
+
+<audio id="audio" controls></audio>
+<pre id="log">Listo.</pre>
+
+<script>
+const $ = id => document.getElementById(id);
+const KEY = 'pruebaMp3_fichas';
+const RE = /\.(mp3|m4a|aac|flac|ogg|opus|wav)$/i;
+let cargados = [];
+let urlActual = null;
+
+const log = t => $('log').textContent = t;
+const key = f => f.name + '|' + f.size;
+const mb = b => (b / 1048576).toFixed(1) + ' MB';
+
+// Capacidades del navegador
+log('Capacidades:\n' +
+  '- showDirectoryPicker: ' + ('showDirectoryPicker' in window) + '\n' +
+  '- showOpenFilePicker: ' + ('showOpenFilePicker' in window) + '\n' +
+  '- mediaSession: ' + ('mediaSession' in navigator) + '\n' +
+  '- storage.persist: ' + !!(navigator.storage && navigator.storage.persist) + '\n\n' +
+  'Elige archivos con el botón 1 o 2.');
+
+function cargar(files, modo) {
+  const t0 = performance.now();
+  const lista = Array.from(files).filter(f => RE.test(f.name) || f.type.startsWith('audio/'));
+  cargados = lista;
+  const ms = Math.round(performance.now() - t0);
+  const total = lista.reduce((s, f) => s + f.size, 0);
+  const rel = lista[0] && lista[0].webkitRelativePath ? lista[0].webkitRelativePath : '(vacía)';
+  log('Modo: ' + modo + '\n' +
+    'Archivos recibidos: ' + files.length + '\n' +
+    'De audio: ' + lista.length + '\n' +
+    'Tamaño total: ' + mb(total) + '\n' +
+    'Tiempo de procesado: ' + ms + ' ms\n' +
+    'Ruta relativa del primero: ' + rel + '\n' +
+    'Primeros nombres:\n  ' + lista.slice(0, 3).map(f => f.name).join('\n  '));
+}
+
+$('f1').addEventListener('change', e => cargar(e.target.files, 'archivos'));
+$('f2').addEventListener('change', e => cargar(e.target.files, 'carpeta'));
+
+$('bPlay').onclick = () => {
+  if (!cargados.length) return log('Primero carga archivos (botón 1 o 2).');
+  const f = cargados[Math.floor(Math.random() * cargados.length)];
+  if (urlActual) URL.revokeObjectURL(urlActual);
+  urlActual = URL.createObjectURL(f);
+  $('audio').src = urlActual;
+  $('audio').play().catch(err => log('Error al reproducir: ' + err.message));
+  if ('mediaSession' in navigator) {
+    navigator.mediaSession.metadata = new MediaMetadata({ title: f.name, artist: 'Prueba local' });
+  }
+  log('Sonando: ' + f.name + ' (' + mb(f.size) + ')\n\nPrueba ahora a apagar la pantalla: ¿sigue sonando?\n¿Aparecen controles en la pantalla de bloqueo?');
+};
+
+$('bSave').onclick = () => {
+  if (!cargados.length) return log('Primero carga archivos.');
+  try {
+    localStorage.setItem(KEY, JSON.stringify(cargados.map(key)));
+    log('Guardadas ' + cargados.length + ' fichas.\n\nAhora cierra la pestaña del todo, vuelve a abrir la página, carga los archivos otra vez y pulsa el botón 5.');
+  } catch (e) { log('Error al guardar: ' + e.message); }
+};
+
+$('bCheck').onclick = () => {
+  const g = localStorage.getItem(KEY);
+  if (!g) return log('No hay fichas guardadas (botón 4).');
+  const fichas = new Set(JSON.parse(g));
+  const actuales = new Set(cargados.map(key));
+  let ok = 0;
+  fichas.forEach(k => { if (actuales.has(k)) ok++; });
+  log('Fichas guardadas: ' + fichas.size + '\n' +
+    'Archivos cargados ahora: ' + actuales.size + '\n' +
+    'Reasociadas: ' + ok + '\n' +
+    'Sin archivo: ' + (fichas.size - ok));
+};
+
+$('bClear').onclick = () => { localStorage.removeItem(KEY); log('Datos de la prueba borrados.'); };
+</script>
+</body>
+</html>
