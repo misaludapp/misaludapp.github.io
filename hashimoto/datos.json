@@ -1,0 +1,243 @@
+{
+ "version": 1,
+ "datos": [
+  {
+   "cat": "Tu pastilla",
+   "titulo": "Mejor en ayunas",
+   "texto": "Tómala con un vaso de agua, en ayunas, entre 30 y 60 minutos antes del primer alimento o de una bebida con cafeína.",
+   "mas": "La comida y el café reducen lo que tu cuerpo absorbe de la hormona, y por eso se recomienda ese margen. Con la pastilla puedes beber agua. Pasado el tiempo, puedes desayunar con normalidad.",
+   "fuente": "NHS"
+  },
+  {
+   "cat": "Hashimoto",
+   "titulo": "Qué es Hashimoto",
+   "texto": "Es una enfermedad autoinmune: el sistema inmune ataca la tiroides y esta acaba produciendo poca hormona.",
+   "mas": "Suele avanzar muy despacio, a veces durante años, y puede haber anticuerpos sin síntomas. Si la tiroides funciona con normalidad no hace falta tratamiento, pero sí revisar la TSH de vez en cuando.",
+   "fuente": "NHS"
+  },
+  {
+   "cat": "Análisis",
+   "titulo": "Tras un cambio de dosis",
+   "texto": "El médico suele esperar 6-8 semanas para medir la TSH, cuando la hormona ya se ha estabilizado.",
+   "mas": "",
+   "fuente": "ATA (thyroid.org)"
+  },
+  {
+   "cat": "Tu pastilla",
+   "titulo": "Siempre a la misma hora",
+   "texto": "Intenta tomarla a la misma hora todos los días.",
+   "mas": "Tomarla de forma constante ayuda a que la cantidad de hormona en sangre se mantenga estable. Si cambias tu rutina de la mañana, por ejemplo con el café o el desayuno, avísale a tu médico.",
+   "fuente": "NHS"
+  },
+  {
+   "cat": "Análisis",
+   "titulo": "La TSH",
+   "texto": "Es la señal con la que la hipófisis pide más hormona a la tiroides. Una TSH alta suele indicar poca hormona y una TSH baja, que la dosis puede ser excesiva.",
+   "mas": "Por eso la TSH es la prueba principal para ajustar la dosis. Si está alta, el cuerpo pide más hormona; si está baja, puede estar recibiendo demasiada.",
+   "fuente": "ATA (thyroid.org)"
+  },
+  {
+   "cat": "Hashimoto",
+   "titulo": "La causa más frecuente",
+   "texto": "En el Reino Unido es la causa principal de tiroides poco activo, y es más frecuente en mujeres.",
+   "mas": "",
+   "fuente": "NHS"
+  },
+  {
+   "cat": "Suplementos y dieta",
+   "titulo": "Yodo y algas",
+   "texto": "Las algas kelp y los suplementos de yodo tienen mucho yodo. Sin indicación de tu médico, no es buena idea tomarlos.",
+   "mas": "En Hashimoto la causa no es la falta de yodo. Dosis altas de yodo pueden frenar la liberación de hormona tiroidea.",
+   "fuente": "Manual Merck; Harvard Health"
+  },
+  {
+   "cat": "Para tu consulta",
+   "titulo": "Pregunta: ¿tomo la pastilla antes o después de la extracción?",
+   "texto": "Algunos médicos prefieren que el día del análisis tomes la pastilla después de la extracción de sangre. Pregunta cuál es su indicación.",
+   "mas": "",
+   "fuente": "Pregunta para el médico"
+  },
+  {
+   "cat": "Tu pastilla",
+   "titulo": "Café y desayuno pueden esperar",
+   "texto": "Deja pasar entre 30 y 60 minutos entre la pastilla y el café, el té o el desayuno.",
+   "mas": "No hace falta renunciar al café: lo que importa es el momento. Unas clínicas recomiendan esperar 30 minutos y otras una hora, así que consulta cuál prefiere tu médico.",
+   "fuente": "NHS; UCLA Health"
+  },
+  {
+   "cat": "Análisis",
+   "titulo": "Con la dosis estable",
+   "texto": "Con la dosis estable, las guías hablan de medir la TSH cada 6-12 meses. Tu médico marca tu calendario.",
+   "mas": "",
+   "fuente": "ATA (thyroid.org)"
+  },
+  {
+   "cat": "Hashimoto",
+   "titulo": "Se desconoce la causa",
+   "texto": "No se sabe por qué ocurre, pero es más común en familias con enfermedades tiroideas o autoinmunes.",
+   "mas": "",
+   "fuente": "NHS; HSE"
+  },
+  {
+   "cat": "Suplementos y dieta",
+   "titulo": "Selenio",
+   "texto": "Algunos estudios ven bajar los anticuerpos, pero no es concluyente y las guías europeas no lo recomiendan. Pregunta antes de tomarlo.",
+   "mas": "Algunos estudios pequeños ven bajar los anticuerpos, pero sin mejorar de forma constante la hormona ni los síntomas.",
+   "fuente": "ETA; revisión Cochrane"
+  },
+  {
+   "cat": "Para tu consulta",
+   "titulo": "Pregunta: ¿cuándo me toca la próxima analítica?",
+   "texto": "Anotar la fecha que te diga el médico evita olvidos.",
+   "mas": "",
+   "fuente": "Pregunta para el médico"
+  },
+  {
+   "cat": "Tu pastilla",
+   "titulo": "Tomarla por la noche",
+   "texto": "Hay quien la toma de noche, al menos 3 o 4 horas después de comer. Es una alternativa, pero cámbialo solo si tu médico lo aprueba.",
+   "mas": "Las guías aceptan tomarla al acostarte si han pasado al menos 3 horas desde la última comida. Lo importante es elegir una opción y mantenerla cada día.",
+   "fuente": "UCLA Health"
+  },
+  {
+   "cat": "Análisis",
+   "titulo": "Los anticuerpos",
+   "texto": "Anti-TPO y anti-TG confirman el origen autoinmune. No hace falta repetirlos: lo que se vigila es la TSH.",
+   "mas": "Pueden aparecer antes de que cambien las hormonas, y su nivel no refleja cómo te sientes. Por eso no sirven para ajustar el tratamiento.",
+   "fuente": "ATA (thyroid.org)"
+  },
+  {
+   "cat": "Hashimoto",
+   "titulo": "Síntomas que van despacio",
+   "texto": "Aparecen poco a poco: cansancio, frío, dificultad para concentrarse, ánimo bajo, piel y pelo secos.",
+   "mas": "Suelen empeorar poco a poco y pueden ser leves o difíciles de notar. Anotar cómo te sientes te ayuda a ver la evolución entre un análisis y otro.",
+   "fuente": "NHS"
+  },
+  {
+   "cat": "Suplementos y dieta",
+   "titulo": "Sin gluten",
+   "texto": "Sin celiaquía no hay evidencia de que quitar el gluten ayude. Si tienes síntomas digestivos, consúltalo antes de quitarlo.",
+   "mas": "La celiaquía es más frecuente en la tiroiditis autoinmune, por eso el médico puede pedir una prueba si hay síntomas digestivos. Conviene hacerla antes de quitar el gluten, porque quitarlo puede alterar el resultado.",
+   "fuente": "Sociedad PolSPEN 2018"
+  },
+  {
+   "cat": "Para tu consulta",
+   "titulo": "Pregunta: ¿qué separación dejo con el calcio o el hierro?",
+   "texto": "Los prospectos y las guías no coinciden en el tiempo exacto.",
+   "mas": "",
+   "fuente": "Pregunta para el médico"
+  },
+  {
+   "cat": "Tu pastilla",
+   "titulo": "Calcio, hierro y antiácidos",
+   "texto": "Pueden reducir lo que absorbes de la pastilla. Tu prospecto indica al menos 2 horas de separación y muchas guías recomiendan 4. Pregunta a tu farmacéutico cuál aplicar.",
+   "mas": "Esto incluye también los multivitamínicos con minerales. No hace falta evitar los alimentos con calcio, pero conviene dejar pasar un rato desde la pastilla. Si tomas algún suplemento, llévaselo a tu médico o farmacéutico.",
+   "fuente": "Prospecto de Eutirox (AEMPS); Mayo Clinic"
+  },
+  {
+   "cat": "Análisis",
+   "titulo": "Biotina y análisis",
+   "texto": "La biotina de los suplementos para pelo y uñas puede alterar los análisis de tiroides. Pregunta cuántos días antes dejarla.",
+   "mas": "La biotina está en muchos suplementos de pelo y uñas. Puede dar resultados falsamente altos o bajos de TSH y T4. Si la tomas, díselo a quien te pida la analítica.",
+   "fuente": "NHS; Prospecto de Eutirox (AEMPS); Lab Tests Online"
+  },
+  {
+   "cat": "Hashimoto",
+   "titulo": "Si sigues cansada",
+   "texto": "Coméntalo con tu médico: muchos síntomas son comunes y pueden tener otras causas.",
+   "mas": "El cansancio es muy inespecífico. Llevar anotados tus síntomas y tu ánimo, como haces en la app, ayuda a tu médico a decidir si hay que revisar algo.",
+   "fuente": "NHS"
+  },
+  {
+   "cat": "Para tu consulta",
+   "titulo": "Pregunta: ¿puedo tomar este suplemento?",
+   "texto": "Llévale el nombre exacto de cualquier suplemento que quieras tomar.",
+   "mas": "",
+   "fuente": "Pregunta para el médico"
+  },
+  {
+   "cat": "Tu pastilla",
+   "titulo": "Si se te olvida una pastilla",
+   "texto": "Nunca tomes dos juntas para compensar. Si debes tomarla al acordarte o esperar al día siguiente depende del prospecto: sigue el tuyo o pregunta a tu farmacéutico.",
+   "mas": "Le pasa a mucha gente. Como la levotiroxina tarda días en bajar de la sangre, una dosis olvidada suele notarse poco. Si olvidas varios días seguidos, contacta con tu médico antes de reajustar nada.",
+   "fuente": "NHS; prospecto de Euthyrox"
+  },
+  {
+   "cat": "Hashimoto",
+   "titulo": "La regla también cuenta",
+   "texto": "Una regla irregular o abundante puede ser un síntoma de tiroides poco activo.",
+   "mas": "",
+   "fuente": "NHS"
+  },
+  {
+   "cat": "Para tu consulta",
+   "titulo": "Pregunta: ¿qué hago si se me olvida la pastilla?",
+   "texto": "Las indicaciones varían según el medicamento.",
+   "mas": "",
+   "fuente": "Pregunta para el médico"
+  },
+  {
+   "cat": "Tu pastilla",
+   "titulo": "No cambies de marca sin avisar",
+   "texto": "Cambiar a otro medicamento con levotiroxina puede desajustar el tiroides. Consúltalo antes con tu médico.",
+   "mas": "Si en la farmacia te dan otra marca o presentación, díselo a tu médico. Algunos protocolos recomiendan repetir la TSH a las 6-8 semanas tras el cambio.",
+   "fuente": "Prospecto de Eutirox (AEMPS)"
+  },
+  {
+   "cat": "Hashimoto",
+   "titulo": "Si algún día planeas un embarazo",
+   "texto": "Díselo a tu médico: harán más análisis y es probable que ajusten la dosis.",
+   "mas": "Un tiroides poco activo sin tratar puede aumentar el riesgo de complicaciones en el embarazo, pero con tratamiento y controles suelen evitarse. Por eso se avisa pronto y se controla con más frecuencia.",
+   "fuente": "NHS / NHS Wales"
+  },
+  {
+   "cat": "Para tu consulta",
+   "titulo": "Pregunta: ¿cada cuánto me haré análisis con la dosis estable?",
+   "texto": "Tu médico marca tu calendario.",
+   "mas": "",
+   "fuente": "Pregunta para el médico"
+  },
+  {
+   "cat": "Tu pastilla",
+   "titulo": "Cómo guardarla",
+   "texto": "Guárdala por debajo de 25 °C y protegida de la luz.",
+   "mas": "",
+   "fuente": "AEPed (Pediamecum)"
+  },
+  {
+   "cat": "Tu pastilla",
+   "titulo": "No es para adelgazar",
+   "texto": "Las hormonas tiroideas no están indicadas para perder peso.",
+   "mas": "",
+   "fuente": "Prospecto de Thyrofix (AEMPS)"
+  },
+  {
+   "cat": "Tu pastilla",
+   "titulo": "Otros medicamentos y suplementos",
+   "texto": "Algunos interfieren con la pastilla: omeprazol y antiácidos, calcio y hierro, hierba de San Juan o biotina. Avisa de todo lo que tomes.",
+   "mas": "",
+   "fuente": "NHS"
+  },
+  {
+   "cat": "Tu pastilla",
+   "titulo": "Si la dosis es demasiado alta",
+   "texto": "Puede dar insomnio, dolor de cabeza, ansiedad, sudoración o caída de pelo. Cuéntaselo a tu médico en vez de cambiarla tú.",
+   "mas": "",
+   "fuente": "NHS"
+  },
+  {
+   "cat": "Tu pastilla",
+   "titulo": "Tarda en notarse",
+   "texto": "El efecto de un cambio de dosis tarda unas 6-8 semanas en estabilizarse. Por eso se espera para repetir la analítica.",
+   "mas": "La levotiroxina se queda en el cuerpo bastante tiempo, y el nivel estable llega a las 6 semanas aproximadamente. La mejoría es gradual y puede llevar semanas o incluso meses.",
+   "fuente": "ATA (thyroid.org); AAFP"
+  },
+  {
+   "cat": "Tu pastilla",
+   "titulo": "Es un tratamiento de larga duración",
+   "texto": "Lo habitual es tomarla durante toda la vida y se puede llevar una vida normal.",
+   "mas": "Si se deja la pastilla, los síntomas vuelven en pocas semanas. Por eso el objetivo es encontrar tu dosis y mantenerla con controles periódicos.",
+   "fuente": "NHS"
+  }
+ ]
+}
