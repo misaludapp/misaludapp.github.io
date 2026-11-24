@@ -1,1 +1,524 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data: blob:; connect-src https://script.google.com https://*.googleusercontent.com; manifest-src 'self'; worker-src 'self'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#2f7d6d">
+<meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Diario de salud">
+<title>Diario de salud</title>
+<link rel="manifest" href="manifest.json"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png">
+<style>
+:root{color-scheme:light;--bg:#f6f4ef;--cd:#fff;--tx:#1f2a2e;--tx2:#667075;--ac:#2f7d6d;--act:#fff;--bd:#e3e0d8;--l1:#1d4e9e;--l2:#7b3fb0;--l3:#b3265a;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--bg:#14191b;--cd:#1e2528;--tx:#e8ecec;--tx2:#97a3a6;--ac:#5fc4ae;--act:#0c1a17;--bd:#2c363a;--l1:#7fb2ff;--l2:#c39bff;--l3:#ff8fb3}}
+:root[data-theme="dark"]{color-scheme:dark;--bg:#14191b;--cd:#1e2528;--tx:#e8ecec;--tx2:#97a3a6;--ac:#5fc4ae;--act:#0c1a17;--bd:#2c363a;--l1:#7fb2ff;--l2:#c39bff;--l3:#ff8fb3}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:17px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:640px;margin:0 auto;padding:14px 14px 110px}
+h1{font-size:22px;margin:4px 0 12px}h2{font-size:17px;margin:0 0 8px}
+.c{background:var(--cd);border:1px solid var(--bd);border-radius:16px;padding:14px;margin-bottom:12px}
+.r{display:flex;gap:8px;flex-wrap:wrap}.r>*{flex:1 1 90px}
+button,input,select,textarea{font:inherit;color:inherit}
+input,select,textarea{width:100%;padding:10px;border:1px solid var(--bd);border-radius:10px;background:var(--bg);margin:3px 0}
+input[type=checkbox]{width:22px;height:22px;margin:0;flex:none}
+.b{min-height:48px;padding:8px 14px;border-radius:12px;border:1px solid var(--bd);background:var(--bg);cursor:pointer;margin:3px 0}
+.b.on,.b.p{background:var(--ac);color:var(--act);border-color:var(--ac)}
+.b.e{font-size:28px;padding:4px}.b.x{flex:0 0 48px}
+.m{color:var(--tx2);font-size:14px}
+.ck{display:flex;gap:10px;align-items:center;padding:6px 0}
+.q{border-top:1px solid var(--bd);padding:6px 0}
+.pv{font-size:14px}.pv h2{margin:10px 0 4px;font-size:15px}.pv h3{margin:2px 0 4px;font-size:15px;text-decoration:underline;text-underline-offset:3px}.pv svg.ch{margin:4px 0 8px}
+summary{cursor:pointer;padding:6px 0}
+svg.ch{width:100%;height:auto;display:block;max-width:560px;margin:0 auto}
+nav{position:fixed;left:0;right:0;bottom:0;display:flex;background:var(--cd);border-top:1px solid var(--bd);padding-bottom:env(safe-area-inset-bottom,0px)}
+nav button{flex:1;border:0;background:none;padding:8px 2px;font-size:12px;color:var(--tx2)}
+nav button.on{color:var(--ac);font-weight:600}nav span{display:block;font-size:22px}
+textarea{resize:vertical;min-height:64px}
+.r.n5{flex-wrap:nowrap;gap:6px}.r.n5>*{flex:1 1 0;min-width:0}
+.b.e{font-size:26px;padding:2px 0}.b.s{min-height:38px;padding:2px 0}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}.g2>*{margin:0!important;min-width:0}
+.mc{cursor:pointer;padding:10px}.mc.off{opacity:.6}
+.bad{color:#b42318}.warn{border-color:#d08a2e}
+/* hoja del puente de Drive (bloque SP), avisos y toast */
+#sh{position:fixed;inset:0;background:#0009;z-index:60;display:none;align-items:center;justify-content:center;padding:14px}#sh.show{display:flex}
+#shBody{background:var(--cd);color:var(--tx);border-radius:16px;padding:16px;width:100%;max-width:520px;max-height:90vh;overflow:auto}#shBody h3{margin:0 0 8px}
+#shBody label,#drvBox label{display:block;margin-top:8px;font-size:14px;color:var(--tx2)}
+.shb{background:var(--cd);color:var(--tx);border-radius:16px;padding:16px;width:min(460px,100%);display:flex;flex-direction:column;gap:8px}.shb input{margin:0}
+.btns{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+.btns button{min-height:44px;padding:8px 14px;border-radius:12px;border:1px solid var(--bd);background:var(--bg);color:var(--tx);cursor:pointer}
+.btns button:first-child{background:var(--ac);color:var(--act);border-color:var(--ac)}
+.mu{color:var(--tx2);font-size:14px;margin:4px 0}
+.card{background:var(--bg);border:1px solid var(--bd);border-radius:12px;padding:12px;margin:8px 0}
+#toast{position:fixed;left:50%;bottom:84px;transform:translate(-50%,30px);opacity:0;background:var(--ac);color:var(--act);padding:10px 18px;border-radius:20px;font-size:14px;z-index:70;transition:.25s;pointer-events:none;max-width:92vw;text-align:center}#toast.on{opacity:1;transform:translate(-50%,0)}
+</style></head><body><main id="a"></main><nav id="n"></nav>
+<div id="sh"><div id="shBody"></div></div><div id="toast"></div>
+<script>
+/* ===== DIARIO DE SALUD 2.0 =====
+   Datos en IndexedDB «diario-salud» (almacén kv): clave 'S' = todos los datos (igual que la 1.2, así no hay que migrar nada)
+   y clave 'meta' = control de copias. Si queda la copia antigua de localStorage «sd1» (de antes de IndexedDB), se gestiona
+   sin perder nada (ver arrancar). Copias cifradas en Drive: «Seguridad solo para el puente», carpeta Apps/Backups/diariosalud. */
+const APP='Diario de salud',VER='2.0.0',FN='diario_salud',APPS=['Diario de salud','Mi Diario de Salud'];
+const K='sd1',uid=()=>Math.random().toString(36).slice(2,9)||'x'+Date.now().toString(36),today=()=>new Date().toLocaleDateString('sv');
+const e=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])),esc=e,$=s=>document.querySelector(s);
+const fd=d=>d?e(String(d).split('-').reverse().join('/')):'';
+const defS=()=>({v:1,ficha:{nombre:'',nac:'',diag:'',alerg:'',cpap:'',otros:''},meds:[],
+specs:[['cab','Médico de cabecera'],['neu','Neumólogo'],['tra','Traumatólogo'],['der','Dermatólogo'],['gin','Ginecólogo'],['fis','Fisioterapeuta']].map(([id,n])=>({id,n})),
+pregs:[],vis:[],citas:[],dias:{},medidas:[],
+segs:[['rod','Dolor de rodillas'],['hom','Dolor de hombro'],['can','Cansancio'],['res','Molestias respiratorias']].map(([id,n])=>({id,n,on:true})),
+acts:[['Caminar',60],['Fit Dance',60],['Espalda Sana',60],['Yoga',60]].map(([n,m])=>({id:uid(),n,m})),mej:[],exp:'',bk:{m:1,c:1}});
+let S=defS(),db=null,BLOQ=false,INIT=true,META={changes:0,lastBackup:null,legacy:null,snooze:''};
+/* Base de datos: la MISMA de la 1.2 («diario-salud», almacén kv). Ya no hay plan B en localStorage: si IndexedDB falla
+   se avisa y no se toca nada (la 1.2 cargaba entonces la copia vieja de localStorage y podía guardar encima de lo antiguo). */
+const idb=()=>new Promise((ok,ko)=>{if(!window.indexedDB)return ko(new Error('Este navegador no tiene IndexedDB'));const r=indexedDB.open('diario-salud',1);r.onupgradeneeded=()=>r.result.createObjectStore('kv');
+ r.onsuccess=()=>{const d=r.result;d.onversionchange=()=>{d.close();alert('Hay otra versión del Diario de salud abierta. Cierra esta pestaña.')};ok(d)};r.onerror=()=>ko(r.error);r.onblocked=()=>ko(new Error('El Diario está abierto en otra pestaña. Ciérrala y recarga.'))});
+const kvGet=k=>new Promise(r=>{try{const q=db.transaction('kv').objectStore('kv').get(k);q.onsuccess=()=>r(q.result??null);q.onerror=()=>r(null)}catch(x){r(null)}});
+const kvPut=(k,v)=>new Promise(r=>{try{const t=db.transaction('kv','readwrite');t.objectStore('kv').put(v,k);t.oncomplete=()=>r(true);t.onerror=t.onabort=()=>r(false)}catch(x){r(false)}});
+const metaSave=()=>kvPut('meta',META);
+/* IndexedDB copia S en el momento de llamar a put, y las transacciones se aplican en orden: no se pisan */
+const save=()=>{if(BLOQ||!db)return;if(!INIT){META.changes=(META.changes||0)+1;metaSave()}kvPut('S',S).then(ok=>{if(!ok)toast('⚠️ No se pudo guardar el último cambio',4000)})};
+let tab='hoy',sub='',cur=today(),curAuto=true,skip=0,dopen=0,mt='peso',fe='',ie='',idays=30,goal='',im='dias',idesde='',mv='',me=0,mAll=0;
+let secs={ficha:1,meds:1,preg:1,vis:1,bien:1,dep:1,cpap:1,adh:1,med:1,det:0};
+const A=document.getElementById('a'),sn=id=>(S.specs.find(s=>s.id==id)||{n:'General'}).n;
+const so=v=>S.specs.map(s=>`<option value="${s.id}" ${s.id==v?'selected':''}>${e(s.n)}</option>`).join('');
+const f=(c,x,k,ph,t)=>`<input type="${t||'text'}" placeholder="${ph}" value="${e(x[k])}" onchange="upd('${c}','${x.id}','${k}',this.value)">`;
+const ta=(c,x,k,ph)=>`<textarea rows="2" placeholder="${ph}" onchange="upd('${c}','${x.id}','${k}',this.value)">${e(x[k])}</textarea>`;
+const ck=(c,x,k,l)=>`<label class="ck"><input type="checkbox" ${x[k]?'checked':''} onchange="upd('${c}','${x.id}','${k}',this.checked)"> ${l}</label>`;
+const upd=(c,id,k,v)=>{const o=S[c].find(x=>x.id==id);if(o){o[k]=v;save()}};
+const updr=(c,id,k,v)=>{upd(c,id,k,v);render()};
+const del=(c,id)=>{if(confirm('¿Borrar este elemento?')){S[c]=S[c].filter(x=>x.id!=id);save();render()}};
+const add=(c,o)=>{S[c].push({id:uid(),...o});save();render()};
+const go=t=>{tab=t;sub='';mv='';render();scrollTo(0,0)};
+function render(){
+ if(!db||BLOQ){A.innerHTML=BOOTERR;document.getElementById('n').innerHTML='';return}
+ const T=[['hoy','🏠','Hoy'],['med','📈','Medidas'],['con','🩺','Consultas'],['inf','📄','Informe'],['mas','⋯','Más']];
+ document.getElementById('n').innerHTML=T.map(t=>`<button class="${tab==t[0]?'on':''}" onclick="go('${t[0]}')"><span>${t[1]}</span>${t[2]}</button>`).join('');
+ A.innerHTML=({hoy,med:vmed,con,inf,mas})[tab]();
+}
+/* ---------- HOY ---------- */
+function sd(k,v,nr,day){day=day||cur;const d=S.dias[day]=S.dias[day]||{};if(v===null||v==='')delete d[k];else d[k]=v;if(!Object.keys(d).length)delete S.dias[day];save();if(!nr)render()}
+/* La nota se guarda mientras escribes (antes solo al salir del cuadro: si cerrabas la app escribiendo, se perdía) */
+let nT=null,nP=null;
+function notaIn(v){clearTimeout(nT);nP={day:cur,v};nT=setTimeout(notaFlush,700)}
+function notaFlush(){clearTimeout(nT);nT=null;if(!nP)return;const{day,v}=nP;nP=null;if(((S.dias[day]||{}).nota||'')!==v)sd('nota',v,1,day)}
+/* ¿Se tomaba esta medicación ese día? (la 1.2 usaba la lista actual para cualquier fecha) */
+const medOn=(m,k)=>!!m.dia&&(!m.desde||m.desde<=k)&&(m.hasta?m.hasta>=k:!!m.act);
+const tg=(k,v)=>sd(k,((S.dias[cur]||{})[k]==v)?null:v);
+function ts(k,id){const a=[...((S.dias[cur]||{})[k]||[])],i=a.indexOf(id);i<0?a.push(id):a.splice(i,1);sd(k,a.length?a:null)}
+function ss(id,n){const o={...((S.dias[cur]||{}).seg||{})};o[id]==n?delete o[id]:o[id]=n;sd('seg',Object.keys(o).length?o:null)}
+function hoy(){
+ const d=S.dias[cur]||{},sg=S.segs.filter(s=>s.on),dm=S.meds.filter(m=>medOn(m,cur)),nm=(d.nomed||[]).filter(i=>S.meds.some(m=>m.id==i));
+ return `<h1>${cur==today()?'Hoy':'Día'} <input type="date" value="${e(cur)}" max="${today()}" style="width:auto;font-size:15px" onchange="notaFlush();cur=this.value||today();curAuto=cur==today();render()"></h1>
+ ${citasHoy()}<div class="c"><h2>¿Cómo te encuentras?</h2><div class="r n5">${['😣','😕','😐','🙂','😄'].map((x,i)=>`<button class="b e ${d.b==i+1?'on':''}" onclick="tg('b',${i+1})">${x}</button>`).join('')}</div></div>
+ <div class="c"><h2>Deporte de hoy</h2><div class="g2">${S.acts.map(a=>`<button class="b ${(d.act||[]).includes(a.id)?'on':''}" onclick="ts('act','${a.id}')">${e(a.n)}</button>`).join('')||'<span class="m">Añade tus actividades en Más → Ajustes.</span>'}</div></div>
+ <div class="c"><h2>CPAP esta noche</h2><div class="r">${[['t','Toda la noche'],['p','Parcial'],['n','No la usé']].map(([k,l])=>`<button class="b ${d.cpap==k?'on':''}" onclick="tg('cpap','${k}')">${l}</button>`).join('')}</div>
+ <input type="number" step="0.5" min="0" max="14" placeholder="Horas de uso (opcional)" value="${e(d.h)}" onchange="sd('h',this.value,1)"></div>
+ ${dm.length?`<div class="c"><h2>Medicación de hoy</h2><p style="margin:0 0 6px">${nm.length?'⚠️ Sin tomar: '+nm.map(i=>e((S.meds.find(m=>m.id==i)||{}).n)).join(', '):'✅ Se asume tomada toda la habitual.'}</p><button class="b" onclick="skip=!skip;render()">Me he saltado alguna</button>${skip?`<div class="r">${dm.map(m=>`<button class="b ${nm.includes(m.id)?'on':''}" onclick="ts('nomed','${m.id}')">${e(m.n)}</button>`).join('')}</div>`:''}</div>`:''}
+ ${sg.length?`<div class="c"><details ${dopen?'open':''} ontoggle="dopen=this.open"><summary><b>Más detalle</b> <span class="m">(1 = nada, 5 = mucho)</span></summary>${sg.map(s=>`<div style="margin-top:8px">${e(s.n)}</div><div class="r n5">${[1,2,3,4,5].map(n=>`<button class="b s ${(d.seg||{})[s.id]==n?'on':''}" onclick="ss('${s.id}',${n})">${n}</button>`).join('')}</div>`).join('')}</details></div>`:''}
+ <div class="c"><h2>Notas</h2><textarea rows="3" placeholder="Cualquier cosa que quieras recordar…" oninput="notaIn(this.value)" onchange="notaIn(this.value);notaFlush()">${e(d.nota)}</textarea></div>`;
+}
+/* ---------- MEDIDAS ---------- */
+/* Motor de gráficas: se dibuja con primitivas que sirven para SVG (pantalla) y PDF */
+const PAL={tx:['var(--tx)','#1f2a2e'],t2:['var(--tx2)','#667075'],bd:['var(--bd)','#d9d6cc'],ac:['var(--ac)','#2f7d6d'],l1:['var(--l1)','#1d4e9e'],l2:['var(--l2)','#7b3fb0'],l3:['var(--l3)','#b3265a'],g1:['#2e9e6b','#2e9e6b'],g2:['#8bc34a','#8bc34a'],y:['#f2c230','#f2c230'],o:['#f08a24','#f08a24'],r:['#d9433b','#d9433b'],b:['#4a90d9','#4a90d9']};
+const DOT=[.5,3.2],BTA=[[null,120,'g1','Óptima <120'],[120,130,'g2','Normal 120-129'],[130,140,'y','Normal-alta 130-139'],[140,160,'o','Alta 140-159'],[160,null,'r','Muy alta 160+']],
+BTB=[[null,80,'g1','Óptima <80'],[80,85,'g2','Normal 80-84'],[85,90,'y','Normal-alta 85-89'],[90,100,'o','Alta 90-99'],[100,null,'r','Muy alta 100+']],
+BSA=[[null,90,'r','Peligro <90'],[90,95,'y','Vigilar 90-94'],[95,null,'g1','Normal 95-100']],BPU=[[60,100,'g1','Normal en reposo 60-100']];
+const CHS={peso:[{ttl:'Peso (kg)',k:'v1',nm:'Peso',c:'ac',pad:.5}],
+ ten:[{ttl:'Tensión alta - sistólica (mmHg)',k:'v1',nm:'Alta',c:'l1',pad:5,bands:BTA},{ttl:'Tensión baja - diastólica (mmHg)',k:'v2',nm:'Baja',c:'l2',pad:5,bands:BTB},{ttl:'Pulso (ppm)',k:'v3',nm:'Pulso',c:'l3',pad:5,bands:BPU}],
+ sat:[{ttl:'Saturación de oxígeno (%)',k:'v1',nm:'Saturación',c:'l1',pad:1,cap:100,bands:BSA},{ttl:'Pulso (ppm)',k:'v3',nm:'Pulso',c:'l3',pad:5,bands:BPU}]};
+function cm(o){
+ const pts=o.a.filter(x=>x[o.k]!==''&&x[o.k]!=null&&!isNaN(+x[o.k])).map(x=>({f:x.f,v:+x[o.k]})),n=pts.length;
+ if(n<2)return null;
+ const W=320,L=32,R=314,T=20,PH=110,B=T+PH,ys=pts.map(p=>p.v),P=[];
+ const sm=ys.map((_,i)=>{const w=ys.slice(Math.max(0,i-2),i+1);return w.reduce((s,v)=>s+v,0)/w.length});
+ let lo=Math.min(...ys,...sm),hi=Math.max(...ys,...sm);const pad=Math.max((hi-lo)*.15,o.pad);lo-=pad;hi+=pad;
+ const st=[.5,1,2,5,10,20,50,100].find(q=>(hi-lo)/q<=5)||100;
+ lo=Math.floor(lo/st)*st;hi=Math.ceil(hi/st)*st;if(o.cap!=null)hi=Math.min(hi,o.cap);
+ const Y=v=>B-(v-lo)/(hi-lo)*PH,X=i=>L+6+i*(R-L-12)/(n-1);
+ P.push({t:'x',x:2,y:11,s:o.ttl,z:10,b:1,c:'tx'});
+ const vis=[];(o.bands||[]).forEach(([a,b,c,l])=>{const u=Math.max(a==null?-1e9:a,lo),w=Math.min(b==null?1e9:b,hi);if(u<w){P.push({t:'r',x:L,y:Y(w),w:R-L,h:Y(u)-Y(w),c,a:.22});vis.push([c,l])}});
+ for(let i=0;lo+i*st<=hi+1e-9;i++){const v=lo+i*st;P.push({t:'l',x1:L,y1:Y(v),x2:R,y2:Y(v),c:'bd',w:.5});P.push({t:'x',x:L-3,y:Y(v)+3,s:String(+v.toFixed(1)),z:8,c:'t2',an:'e'})}
+ P.push({t:'p',pts:ys.map((v,i)=>[X(i),Y(v)]),c:o.c,w:1.8});
+ if(n<=60)ys.forEach((v,i)=>P.push({t:'c',x:X(i),y:Y(v),r:n<=30?2.6:1.8,c:o.c}));
+ if(n>=3)P.push({t:'p',pts:sm.map((v,i)=>[X(i),Y(v)]),c:'tx',w:1.6,d:DOT});
+ P.push({t:'x',x:L,y:B+12,s:fd(pts[0].f),z:8,c:'t2'});P.push({t:'x',x:R,y:B+12,s:fd(pts[n-1].f),z:8,c:'t2',an:'e'});
+ if(n>=5)P.push({t:'x',x:X(Math.floor((n-1)/2)),y:B+12,s:fd(pts[Math.floor((n-1)/2)].f),z:8,c:'t2',an:'m'});
+ const lg=[['line',o.c,o.nm]];if(n>=3)lg.push(['dot','tx','Media móvil (3 medidas)']);vis.forEach(([c,l])=>lg.push(['band',c,l]));
+ let x=2,y=B+22;
+ lg.forEach(([k,c,l])=>{const w=18+l.length*4.4;if(x>2&&x+w>W-2){x=2;y+=12}
+  if(k=='line'){P.push({t:'l',x1:x,y1:y+4,x2:x+13,y2:y+4,c,w:1.8});P.push({t:'c',x:x+6.5,y:y+4,r:2.2,c})}
+  else if(k=='dot')P.push({t:'l',x1:x,y1:y+4,x2:x+13,y2:y+4,c,w:1.6,d:DOT});
+  else P.push({t:'r',x,y:y-.5,w:10,h:9,c,a:.45});
+  P.push({t:'x',x:x+16,y:y+7,s:l,z:8,c:'t2'});x+=w});
+ return {W,H:y+14,P,ttl:o.ttl};
+}
+const nn=v=>(+v).toFixed(1);
+const primSvg=p=>{const c=PAL[p.c][0],da=p.d?` stroke-dasharray="${p.d.join(' ')}"`:'';
+ if(p.t=='r')return `<rect x="${nn(p.x)}" y="${nn(p.y)}" width="${nn(p.w)}" height="${nn(p.h)}" fill="${c}" fill-opacity="${p.a}"/>`;
+ if(p.t=='l')return `<line x1="${nn(p.x1)}" y1="${nn(p.y1)}" x2="${nn(p.x2)}" y2="${nn(p.y2)}" stroke="${c}" stroke-width="${p.w}" stroke-linecap="round"${da}/>`;
+ if(p.t=='p')return `<polyline points="${p.pts.map(q=>nn(q[0])+','+nn(q[1])).join(' ')}" fill="none" stroke="${c}" stroke-width="${p.w}" stroke-linecap="round" stroke-linejoin="round"${da}/>`;
+ if(p.t=='c')return `<circle cx="${nn(p.x)}" cy="${nn(p.y)}" r="${p.r}" fill="${c}"/>`;
+ return `<text x="${nn(p.x)}" y="${nn(p.y)}" font-size="${p.z}" fill="${c}"${p.b?' font-weight="700"':''}${p.an=='e'?' text-anchor="end"':p.an=='m'?' text-anchor="middle"':''}>${e(p.s)}</text>`};
+const svgOf=m=>`<svg viewBox="0 0 ${m.W} ${nn(m.H)}" class="ch" role="img" aria-label="${e(m.ttl)}">${m.P.map(primSvg).join('')}</svg>`;
+const charts=(t,a)=>CHS[t].map(o=>({o,m:cm({...o,a})}));
+const fm=x=>x.t=='peso'?x.v1+' kg':x.t=='ten'?x.v1+'/'+x.v2+(x.v3?' ('+x.v3+' ppm)':''):x.v1+'%'+(x.v3?' ('+x.v3+' ppm)':'');
+function vmed(){
+ const L={peso:'Peso',ten:'Tensión',sat:'Oxígeno'},a=S.medidas.filter(x=>x.t==mt).sort(mOrd);
+ const i=(id,ph)=>`<input id="${id}" type="number" step="0.1" placeholder="${ph}">`;
+ return `<h1>Medidas</h1><div class="r">${Object.keys(L).map(k=>`<button class="b ${mt==k?'on':''}" onclick="mt='${k}';render()">${L[k]}</button>`).join('')}</div>
+ <div class="c"><h2>Nueva medida</h2><input id="md" type="date" value="${today()}" max="${today()}">
+ ${mt=='peso'?i('m1','Peso (kg)'):mt=='ten'?`<div class="r">${i('m1','Alta')}${i('m2','Baja')}${i('m3','Pulso')}</div>`:`<div class="r">${i('m1','Saturación %')}${i('m3','Pulso')}</div>`}
+ ${mt!='peso'?'<select id="mc"><option>En reposo</option><option>Tras ejercicio</option><option>Otro</option></select>':''}
+ <button class="b p" style="width:100%" onclick="addM()">Guardar</button></div>
+ ${charts(mt,a).map(({o,m})=>`<div class="c">${m?svgOf(m):`<p class="m"><b>${e(o.ttl)}</b>: hacen falta al menos 2 medidas con este dato para ver la gráfica.</p>`}</div>`).join('')}${mt!='peso'?'<p class="m">Las franjas de colores son referencias generales; si tu médico te ha marcado otros objetivos, valen los suyos. Línea de puntos: media móvil.</p>':'<p class="m">Línea de puntos: media móvil (promedio de las últimas 3 medidas).</p>'}
+ <div class="c">${[...a].reverse().slice(0,mAll?1e9:15).map(x=>`<div class="q r" style="align-items:center"><span style="flex:3 1 150px">${fd(x.f)} · <b>${e(fm(x))}</b> <span class="m">${e(x.c||'')}</span></span><button class="b x" onclick="del('medidas','${x.id}')">✕</button></div>`).join('')||'<p class="m">Aún no hay medidas.</p>'}
+ ${a.length>15?`<button class="b" style="width:100%" onclick="mAll=!mAll;render()">${mAll?'Ver solo las 15 últimas':'Ver las '+a.length+' medidas'}</button>`:''}</div>`;
+}
+/* mismo día: por orden de apunte (la 1.2 las dejaba en orden aleatorio y la gráfica podía salir en zigzag) */
+const mOrd=(p,q)=>p.f<q.f?-1:p.f>q.f?1:(+p.ts||0)-(+q.ts||0);
+function addM(){
+ const g=id=>(document.getElementById(id)||{}).value,v1=g('m1');if(!v1)return;
+ const R={peso:[20,300],ten:[40,260],sat:[50,100]}[mt],n1=+v1,n2=+g('m2')||'',n3=+g('m3')||'';
+ if(n1<R[0]||n1>R[1])return alert('El valor '+v1+' no parece correcto ('+R[0]+'–'+R[1]+'). Revísalo.');
+ if(mt=='ten'&&n2&&(n2<20||n2>180||n2>=n1))return alert('La tensión baja ('+n2+') no parece correcta. Revísala.');
+ if(n3&&(n3<25||n3>250))return alert('El pulso ('+n3+') no parece correcto. Revísalo.');
+ const f=g('md')||today();if(f>today())return alert('La fecha no puede ser futura.');
+ S.medidas.push({id:uid(),t:mt,f,v1:n1,v2:n2,v3:n3,c:g('mc')||'',ts:Date.now()});save();render();toast('Medida guardada');
+}
+/* ---------- CONSULTAS ---------- */
+function con(){
+ const P=S.pregs.filter(p=>!fe||p.esp==fe),pe=P.filter(p=>!p.ok),pd=P.filter(p=>p.ok),V=S.vis.filter(v=>!fe||v.esp==fe).sort((a,b)=>a.f<b.f?1:-1);
+ const last=S.specs.map(s=>{const v=S.vis.filter(x=>x.esp==s.id).sort((a,b)=>a.f<b.f?1:-1)[0];return v?`<div>${e(s.n)}: <b>${fd(v.f)}</b></div>`:''}).join('');
+ return `<h1>Consultas</h1><select onchange="fe=this.value;render()"><option value="">Todos los médicos</option>${so(fe)}</select>
+ <div class="c"><h2>Preguntas para el médico</h2><label class="m" for="pe">¿Para qué médico?</label><select id="pe">${so(fe||'cab')}</select><textarea id="pq" rows="4" placeholder="Escribe tu duda…"></textarea><button class="b p" style="width:100%" onclick="addP()">Añadir pregunta</button>
+ ${pe.map(p=>`<div class="q"><label class="ck"><input type="checkbox" onchange="updr('pregs','${p.id}','ok',true)"><span><b>${br(p.t)}</b> <span class="m">· ${e(sn(p.esp))}</span></span></label></div>`).join('')||'<p class="m">Sin preguntas pendientes.</p>'}
+ ${pd.length?`<details><summary class="m">Resueltas (${pd.length})</summary>${pd.map(p=>`<div class="q"><label class="ck"><input type="checkbox" checked onchange="updr('pregs','${p.id}','ok',false)"><span>${br(p.t)} <span class="m">· ${e(sn(p.esp))}</span></span></label>${ta('pregs',p,'r','Respuesta del médico')}<button class="b" onclick="del('pregs','${p.id}')">Borrar</button></div>`).join('')}</details>`:''}</div>
+ ${citasCard()}<div class="c"><h2>Visitas</h2>${last?`<div class="m" style="margin-bottom:8px">Última visita:${last}</div>`:''}
+ <details><summary class="b" style="display:block">+ Apuntar una visita</summary><select id="ve">${so(fe||'cab')}</select><input id="vf" type="date" value="${today()}"><textarea id="vd" rows="2" placeholder="Qué me dijeron"></textarea><textarea id="vc" rows="2" placeholder="Qué cambió (medicación, pruebas…)"></textarea><button class="b p" style="width:100%" onclick="addV()">Guardar visita</button></details>
+ ${V.map(v=>`<div class="q"><b>${fd(v.f)} · ${e(sn(v.esp))}</b>${v.d?`<div>${e(v.d).replace(/\n/g,'<br>')}</div>`:''}${v.c?`<div class="m">Cambios: ${br(v.c)}</div>`:''}${v.p?`<div class="m">Próxima: ${e(v.p)}</div>`:''}<button class="b" onclick="del('vis','${v.id}')">Borrar</button></div>`).join('')}</div>`;
+}
+function addP(){const t=document.getElementById('pq').value.trim();if(!t)return;add('pregs',{t,esp:document.getElementById('pe').value,ok:false,r:''})}
+function addV(){const g=id=>document.getElementById(id).value;add('vis',{esp:g('ve'),f:g('vf')||today(),d:g('vd'),c:g('vc')})}
+/* ---------- INFORME ---------- */
+const SL={ficha:'Ficha y alergias',meds:'Medicación actual',preg:'Preguntas pendientes',vis:'Última visita',bien:'Bienestar y síntomas',dep:'Deporte',cpap:'CPAP',adh:'Toma de medicación',med:'Medidas (peso, tensión, oxígeno)',det:'Detalle día a día'};
+function wrap(s,n=92){const o=[];let l='';String(s).split(' ').forEach(w=>{const t=(l+' '+w).trim();if(l&&t.length>n){o.push(l);l=w}else l=t});o.push(l);return o}
+const avg=a=>a.length?(a.reduce((s,v)=>s+ +v,0)/a.length).toFixed(1):'-';
+function rep(){
+ const sp=S.specs.find(s=>s.id==ie),c=ini(),ds=Object.entries(S.dias).filter(([k])=>k>=c).sort(),I=[],F=S.ficha,sc=k=>secs[k];
+ const H=s=>{I.push({s:''});I.push({b:1,s})},P=s=>String(s).split('\n').forEach(l=>wrap(l).forEach(x=>I.push({s:x})));
+ I.push({b:1,s:'Informe de salud'+(sp?' - '+sp.n:'')});
+ P([F.nombre,F.nac&&'Nacimiento: '+fd(F.nac),'Generado: '+fd(today()),'Periodo: '+(c==ALL?'todo el histórico':'del '+fd(c))+' al '+fd(today())+' ('+ds.length+' días con registro)'].filter(Boolean).join(' | '));
+ if(goal.trim()){H('Objetivo de esta consulta');P(goal)}
+ if(sc('ficha')&&(F.diag||F.alerg||F.cpap||F.otros)){H('Ficha médica');F.diag&&P('Diagnósticos: '+F.diag);F.alerg&&P('Alergias: '+F.alerg);F.cpap&&P('Presión CPAP: '+F.cpap);F.otros&&P('Otros: '+F.otros)}
+ const ms=S.meds.filter(m=>m.act);
+ if(sc('meds')&&ms.length){H('Medicación actual');ms.forEach(m=>P('- '+[m.n,m.dosis,m.motivo&&'para '+m.motivo,m.esp&&'('+sn(m.esp)+')',m.desde&&'desde '+fd(m.desde)].filter(Boolean).join(', ')))}
+ const pq=S.pregs.filter(p=>!p.ok&&(!ie||p.esp==ie));
+ if(sc('preg')&&pq.length){H('Preguntas pendientes');pq.forEach((p,i)=>P((i+1)+'. '+p.t+(ie?'':' ('+sn(p.esp)+')')))}
+ const vs=S.vis.filter(v=>!ie||v.esp==ie).sort((a,b)=>a.f<b.f?1:-1).slice(0,2);
+ if(sc('vis')&&vs.length){H('Últimas visitas');vs.forEach(v=>{P(fd(v.f)+' - '+sn(v.esp)+(v.d?': '+v.d:''));v.c&&P('Cambios: '+v.c);v.p&&P('Próxima: '+v.p)})}
+ const ct=S.citas.filter(x=>x.f>=today()&&(!ie||x.esp==ie)).sort((a,b)=>ckey(a)<ckey(b)?-1:1);if(sc('vis')&&ct.length){H('Próximas citas');ct.forEach(x=>P('- '+fd(x.f)+(x.h?' '+x.h:'')+' - '+sn(x.esp)+(x.t?': '+x.t:'')))}
+ if(sc('bien')&&ds.length){H('Bienestar y síntomas (escala 1-5)');P('Bienestar general medio (5 = mejor): '+avg(ds.map(([,d])=>d.b).filter(Boolean)));
+  S.segs.filter(s=>s.on).forEach(s=>{const v=ds.map(([,d])=>d.seg&&d.seg[s.id]).filter(Boolean);if(v.length)P(`- ${s.n}: media ${avg(v)}; ${v.filter(x=>x>=4).length} días con valor alto (4-5) de ${v.length} registrados`)})}
+ if(sc('dep')&&ds.length){H('Deporte');S.acts.forEach(a=>{const n=ds.filter(([,d])=>(d.act||[]).includes(a.id)).length;n&&P(`- ${a.n}: ${n} días`+(a.m?` (aprox. ${n*a.m} min)`:''))})}
+ const cs=ds.filter(([,d])=>d.cpap);
+ if(sc('cpap')&&cs.length){H('CPAP');const n=k=>cs.filter(([,d])=>d.cpap==k).length;P(`Noches registradas: ${cs.length}. Toda la noche: ${n('t')}; parcial: ${n('p')}; no la usó: ${n('n')}.`);const hs=cs.map(([,d])=>d.h).filter(Boolean);hs.length&&P('Horas de uso medias (cuando se anotaron): '+avg(hs)+' h')}
+ /* solo cuenta los días en que se tomaba cada medicación (la 1.2 dividía entre todos los días del periodo) */
+ const ad=S.meds.map(m=>({m,dd:ds.filter(([k])=>medOn(m,k))})).filter(x=>x.dd.length);
+ if(sc('adh')&&ad.length){H('Toma de medicación (autoinformada)');ad.forEach(({m,dd})=>P(`- ${m.n}: olvidada ${dd.filter(([,d])=>(d.nomed||[]).includes(m.id)).length} de ${dd.length} días registrados`+(m.act?'':' (ya finalizada)')))}
+ const md=S.medidas.filter(x=>x.f>=c).sort(mOrd);
+ if(sc('med')&&md.length){H('Medidas');[['peso','Peso'],['ten','Tensión'],['sat','Oxígeno']].forEach(([t,l])=>{const a=md.filter(x=>x.t==t);if(!a.length)return;I.push({s:''});I.push({b:1,u:1,s:l});charts(t,a).forEach(({m})=>m&&I.push({ch:m}));I.push({ms:a.map(x=>fd(x.f).slice(0,5)+' '+fm(x)+(x.c?' '+x.c:''))})})}
+ if(sc('det')&&ds.length>92){H('Resumen por meses (periodo largo)');const mo={};ds.forEach(([k,d])=>{(mo[k.slice(0,7)]=mo[k.slice(0,7)]||[]).push(d)});Object.keys(mo).sort().forEach(m=>P(m.split('-').reverse().join('/')+': '+mo[m].length+' días registrados; bienestar medio '+avg(mo[m].map(d=>d.b).filter(Boolean))+'; deporte '+mo[m].filter(d=>(d.act||[]).length).length+' días'))}
+ if(sc('det')&&ds.length&&ds.length<=92){H('Detalle día a día');ds.forEach(([k,d])=>P(fd(k).slice(0,5)+': '+[d.b&&'bienestar '+d.b,...S.segs.filter(s=>d.seg&&d.seg[s.id]).map(s=>s.n+' '+d.seg[s.id]),(d.act||[]).length&&(d.act.map(i=>(S.acts.find(a=>a.id==i)||{}).n).filter(Boolean).join(', ')),d.cpap&&'CPAP '+({t:'toda',p:'parcial',n:'no'})[d.cpap]+(d.h?' '+d.h+'h':''),d.nota].filter(Boolean).join('; ')))}
+ return I;
+}
+function inf(){
+ return `<h1>Informe para la consulta</h1><div class="c"><select onchange="ie=this.value;render()"><option value="">Todos los médicos</option>${so(ie)}</select>
+ ${perSel()}
+ <textarea rows="2" placeholder="¿Qué quiero sacar de esta visita?" onchange="goal=this.value;render()">${e(goal)}</textarea>
+ <details><summary class="m">Qué incluir</summary>${Object.keys(SL).map(k=>`<label class="ck"><input type="checkbox" ${secs[k]?'checked':''} onchange="secs['${k}']=this.checked?1:0;render()"> ${SL[k]}</label>`).join('')}</details>
+ <button class="b p" style="width:100%" onclick="pdfGo()">📄 Guardar PDF</button></div>
+ <div class="c pv">${rep().map(l=>l.ch?svgOf(l.ch):l.ms?`<div>${l.ms.map(x=>`<span style="white-space:nowrap">${e(x)}</span>`).join(' <span class="m">|</span> ')}</div>`:l.b?(l.u?`<h3>${e(l.s)}</h3>`:`<h2>${e(l.s)}</h2>`):`<div>${e(l.s)||'&nbsp;'}</div>`).join('')}</div>`;
+}
+const pe=s=>String(s).replace(/[‘’]/g,"'").replace(/[“”]/g,'"').replace(/[–—]/g,'-').replace(/[^\x00-\xff]/g,'?').replace(/[\\()]/g,'\\$&');
+const hx=h=>[1,3,5].map(i=>parseInt(h.substr(i,2),16)/255),rgb=(h,a)=>hx(h).map(v=>(a==null?v:1-(1-v)*a).toFixed(3)).join(' ');
+function primPdf(p,x0,y0,k){
+ const X=x=>x0+x*k,Y=y=>y0-y*k,f=v=>v.toFixed(2),hc=PAL[p.c][1];let o;
+ if(p.t=='r')o=`${rgb(hc,p.a)} rg ${f(X(p.x))} ${f(Y(p.y+p.h))} ${f(p.w*k)} ${f(p.h*k)} re f`;
+ else if(p.t=='l'||p.t=='p'){const q=p.t=='l'?[[p.x1,p.y1],[p.x2,p.y2]]:p.pts;o=`${f(p.w*k)} w 1 J 1 j ${p.d?'['+p.d.map(v=>f(v*k)).join(' ')+'] 0 d ':''}${rgb(hc)} RG ${q.map((z,i)=>f(X(z[0]))+' '+f(Y(z[1]))+(i?' l':' m')).join(' ')} S`}
+ else if(p.t=='c'){const r=p.r*k,cx=X(p.x),cy=Y(p.y),q=r*.5523;o=`${rgb(hc)} rg ${f(cx+r)} ${f(cy)} m ${f(cx+r)} ${f(cy+q)} ${f(cx+q)} ${f(cy+r)} ${f(cx)} ${f(cy+r)} c ${f(cx-q)} ${f(cy+r)} ${f(cx-r)} ${f(cy+q)} ${f(cx-r)} ${f(cy)} c ${f(cx-r)} ${f(cy-q)} ${f(cx-q)} ${f(cy-r)} ${f(cx)} ${f(cy-r)} c ${f(cx+q)} ${f(cy-r)} ${f(cx+r)} ${f(cy-q)} ${f(cx+r)} ${f(cy)} c f`}
+ else{const w=p.s.length*p.z*.54,x=p.an=='e'?p.x-w:p.an=='m'?p.x-w/2:p.x;o=`${rgb(hc)} rg BT /${p.b?'F2':'F1'} ${f(p.z*k)} Tf ${f(X(x))} ${f(Y(p.y))} Td (${pe(p.s)}) Tj ET`}
+ return 'q '+o+' Q';
+}
+function mkpdf(items){
+ const pg=[];let cur2=[],y=800;const K=1.2,ex=[];
+ items.forEach(it=>{if(it.ms){let l='';it.ms.forEach(x=>{const t=l?l+'  |  '+x:x;if(l&&t.length>92){ex.push({s:l});l=x}else l=t});l&&ex.push({s:l})}else ex.push(it)});
+ ex.forEach((it,i)=>{
+  if(it.ch){const h=it.ch.H*K+10;if(y-h<50){pg.push(cur2);cur2=[];y=800}const top=y-4;y-=h;it.ch.P.forEach(p=>cur2.push(primPdf(p,50,top,K)));return}
+  const sz=it.b?(it.u?11:12):10,ld=it.b?(it.u?16:18):13,nx=ex[i+1],need=ld+(it.u&&nx&&nx.ch?nx.ch.H*K+10:0);
+  if(y-need<50){pg.push(cur2);cur2=[];y=800}
+  y-=ld;cur2.push(`0 g BT /${it.b?'F2':'F1'} ${sz} Tf 50 ${y} Td (${pe(it.s)}) Tj ET`);
+  if(it.u)cur2.push(`q 0.8 w 0 G 50 ${y-3} m ${(50+it.s.length*sz*.56).toFixed(1)} ${y-3} l S Q`)});pg.push(cur2);
+ const o=[null,'<</Type/Catalog/Pages 2 0 R>>',`<</Type/Pages/Kids[${pg.map((_,i)=>(5+i*2)+' 0 R').join(' ')}]/Count ${pg.length}>>`,'<</Type/Font/Subtype/Type1/BaseFont/Helvetica/Encoding/WinAnsiEncoding>>','<</Type/Font/Subtype/Type1/BaseFont/Helvetica-Bold/Encoding/WinAnsiEncoding>>'];
+ pg.forEach((p,i)=>{const t=p.join('\n');o.push(`<</Type/Page/Parent 2 0 R/MediaBox[0 0 595 842]/Resources<</Font<</F1 3 0 R/F2 4 0 R>>>>/Contents ${6+i*2} 0 R>>`);o.push(`<</Length ${t.length}>>\nstream\n${t}\nendstream`)});
+ let s='%PDF-1.4\n';const off=[];
+ for(let i=1;i<o.length;i++){off[i]=s.length;s+=`${i} 0 obj\n${o[i]}\nendobj\n`}
+ const x=s.length;s+=`xref\n0 ${o.length}\n0000000000 65535 f \n`+off.slice(1).map(n=>String(n).padStart(10,'0')+' 00000 n \n').join('')+`trailer\n<</Size ${o.length}/Root 1 0 R>>\nstartxref\n${x}\n%%EOF`;
+ return new Blob([Uint8Array.from(s,c=>c.charCodeAt(0))],{type:'application/pdf'});
+}
+/* PDF: en el móvil abre «Compartir» (guardar en Archivos, enviar…); si no, lo descarga */
+async function dlPdf(name,bl){
+ try{const fl=new File([bl],name,{type:bl.type});if(navigator.canShare&&navigator.canShare({files:[fl]})){await navigator.share({files:[fl]});return true}}catch(x){if(x&&x.name=='AbortError')return false}
+ dl(bl,name);return true
+}
+const pdfGo=()=>dlPdf('informe-salud-'+today()+'.pdf',mkpdf(rep()));
+/* ---------- MÁS ---------- */
+function mas(){
+ const B=(k,i,t)=>`<button class="b" style="width:100%;text-align:left" onclick="sub='${k}';mv='';render()">${i} ${t}</button>`;
+ if(!sub)return `<h1>Más</h1>${B('ficha','🪪','Ficha médica')}${B('meds','💊','Mi medicación')}${B('cfg','⚙️','Ajustes: médicos, síntomas, deportes')}${B('mej','💡','Ideas de mejora')}${B('copia','💾','Copia de seguridad')}${B('ayuda','❓','Ayuda')}<p class="m">Diario de salud · versión ${VER} · datos en IndexedDB de este dispositivo</p>`;
+ return `<button class="b" onclick="sub='';render()">← Volver</button>`+({ficha,meds:vmeds,cfg,mej,copia,ayuda})[sub]();
+}
+function ficha(){
+ const F=S.ficha,i=(k,l,t)=>`<label class="m">${l}</label>${t==1?`<textarea rows="3" onchange="S.ficha.${k}=this.value;save()">${e(F[k])}</textarea>`:`<input type="${t||'text'}" value="${e(F[k])}" onchange="S.ficha.${k}=this.value;save()">`}`;
+ return `<h1>Ficha médica</h1><div class="c">${i('nombre','Nombre')}${i('nac','Fecha de nacimiento','date')}${i('diag','Diagnósticos activos',1)}${i('alerg','Alergias',1)}${i('cpap','Presión CPAP (la fija el neumólogo)')}${i('otros','Otros datos importantes',1)}</div>`;
+}
+const br=s=>e(s).replace(/\n/g,'<br>'),ALL='0000-00-00';
+const dd=f=>Math.round((new Date(f)-new Date(today()))/864e5),cin=f=>{const n=dd(f);return n==0?'hoy':n==1?'mañana':'en '+n+' días'};
+const ckey=x=>x.f+(x.h||''),cs=()=>S.citas.slice().sort((a,b)=>ckey(a)<ckey(b)?-1:1);
+const cl=x=>`<b>${e(sn(x.esp))}</b> · ${fd(x.f)}${x.h?' · '+e(x.h):''}${x.t?`<div class="m">${br(x.t)}</div>`:''}`;
+function citasHoy(){const a=cs().filter(x=>x.f>=today()).slice(0,3);return a.length?`<div class="c"><h2>Próximas citas</h2>${a.map(x=>`<div class="q">${cl(x)} <span class="m">(${cin(x.f)})</span></div>`).join('')}</div>`:''}
+function citasCard(){
+ const L=cs().filter(x=>!fe||x.esp==fe);
+ return `<div class="c"><h2>Próximas citas</h2><details><summary class="b" style="display:block">+ Apuntar una cita</summary><select id="ce">${so(fe||'cab')}</select><div class="r"><input id="cf" type="date" value="${today()}"><input id="cth" type="time"></div><textarea id="ctx" rows="2" placeholder="Lugar, planta, consulta…"></textarea><button class="b p" style="width:100%" onclick="addC()">Guardar cita</button></details>
+ ${L.map(x=>`<div class="q r" style="align-items:center;${x.f<today()?'opacity:.55':''}"><span style="flex:3 1 150px">${cl(x)} <span class="m">(${x.f<today()?'pasada':cin(x.f)})</span></span><button class="b x" onclick="del('citas','${x.id}')">✕</button></div>`).join('')||'<p class="m">Sin citas apuntadas.</p>'}</div>`;
+}
+function addC(){const g=id=>document.getElementById(id).value;if(!g('cf'))return;add('citas',{esp:g('ce'),f:g('cf'),h:g('cth'),t:g('ctx')})}
+const lastV=()=>{const v=S.vis.filter(x=>!ie||x.esp==ie).sort((a,b)=>a.f<b.f?1:-1)[0];return v?v.f:''};
+const ini=()=>im=='dias'?new Date(Date.now()-(idays-1)*864e5).toLocaleDateString('sv'):im=='desde'?(idesde||ALL):(lastV()||ALL);
+function perSel(){
+ const M=[['dias','Últimos días'],['desde','Desde una fecha'],['visita','Desde la última visita']];
+ return `<div class="r">${M.map(([k,l])=>`<button class="b ${im==k?'on':''}" onclick="im='${k}';if(im=='desde'&&!idesde)idesde=new Date(Date.now()-365*864e5).toLocaleDateString('sv');render()">${l}</button>`).join('')}</div>`+
+ (im=='dias'?`<select onchange="idays=+this.value;render()">${[30,60,90,180,365].map(n=>`<option value="${n}" ${n==idays?'selected':''}>Últimos ${n} días</option>`).join('')}</select>`
+ :im=='desde'?`<input type="date" value="${idesde}" max="${today()}" onchange="idesde=this.value;render()"><p class="m">Cuenta todo desde esa fecha hasta hoy (vacío = todo el histórico).</p>`
+ :`<p class="m">${lastV()?'Desde el '+fd(lastV())+' (última visita'+(ie?' con '+e(sn(ie)):'')+').':'No hay visitas registradas: se incluye todo el histórico.'}</p>`);
+}
+function medView(m){
+ const R=(l,v)=>v?`<p><span class="m">${l}</span><br>${br(v)}</p>`:'';
+ return `<button class="b" onclick="mv='';render()">← Medicación</button><div class="c"><h1>${e(m.n)||'(sin nombre)'}</h1><p>${m.act?'✅ En uso':'⏹ Finalizada'}${m.dia?' · De todos los días':''}</p>${R('Dosis y pauta',m.dosis)}${R('¿Para qué es?',m.motivo)}${R('Lo recetó',m.esp&&sn(m.esp))}${R('Desde',fd(m.desde))}${R('Hasta',fd(m.hasta))}${R('Notas',m.nota)}<button class="b p" onclick="me=1;render()">✏️ Editar</button></div>`;
+}
+function medEdit(m){
+ return `<button class="b" onclick="me=0;render()">← Ver ficha</button><div class="c">${f('meds',m,'n','Nombre')}${ta('meds',m,'dosis','Dosis y pauta (ej. 1 al día)')}${ta('meds',m,'motivo','¿Para qué es?')}<select onchange="upd('meds','${m.id}','esp',this.value)"><option value="">¿Quién lo recetó?</option>${so(m.esp)}</select>
+ <div class="r"><div><span class="m">Desde</span>${f('meds',m,'desde','','date')}</div><div><span class="m">Hasta</span>${f('meds',m,'hasta','','date')}</div></div>${ta('meds',m,'nota','Notas')}${ck('meds',m,'act','En uso ahora')}${ck('meds',m,'dia','De todos los días (sale en “Hoy”)')}<button class="b p" onclick="me=0;render()">Guardar</button> <button class="b" onclick="if(confirm('¿Borrar esta medicación?')){S.meds=S.meds.filter(x=>x.id!='${m.id}');save();mv='';me=0;render()}">Borrar</button></div>`;
+}
+function vmeds(){
+ const m=S.meds.find(x=>x.id==mv);if(m)return me?medEdit(m):medView(m);
+ const card=m=>`<div class="c mc ${m.act?'':'off'}" onclick="mv='${m.id}';me=0;render()"><b>${e(m.n)||'(sin nombre)'}</b><div class="m">${e(m.dosis)}</div><div class="m">${m.act?'✅ En uso':'⏹ Finalizada'}</div></div>`,A2=S.meds.filter(m=>m.act),B2=S.meds.filter(m=>!m.act);
+ return `<h1>Mi medicación</h1><p class="m">Toca una tarjeta para ver su ficha completa.</p><div class="g2">${A2.map(card).join('')}</div>${B2.length?`<details><summary class="m">Finalizadas (${B2.length})</summary><div class="g2" style="margin-top:8px">${B2.map(card).join('')}</div></details>`:''}<button class="b p" style="width:100%" onclick="const id=uid();S.meds.push({id,n:'',act:true,dia:true});save();mv=id;me=1;render()">+ Añadir medicación</button>`;
+}
+function cfg(){
+ const row=(c,x,extra)=>`<div class="r" style="align-items:center">${f(c,x,'n','Nombre')}${extra||''}<button class="b x" onclick="del('${c}','${x.id}')">✕</button></div>`;
+ return `<h1>Ajustes</h1><div class="c"><h2>Médicos</h2>${S.specs.map(s=>row('specs',s)).join('')}<button class="b" onclick="add('specs',{n:''})">+ Añadir médico</button></div>
+ <div class="c"><h2>Síntomas a seguir</h2><p class="m">Actívalos o desactívalos según la época.</p>${S.segs.map(s=>row('segs',s,ck('segs',s,'on','Seguir'))).join('')}<button class="b" onclick="add('segs',{n:'',on:true})">+ Añadir síntoma</button></div>
+ <div class="c"><h2>Deportes y actividades</h2><p class="m">Minutos habituales por sesión (para los informes).</p>${S.acts.map(a=>row('acts',a,f('acts',a,'m','min','number'))).join('')}<button class="b" onclick="add('acts',{n:'',m:60})">+ Añadir actividad</button></div>`;
+}
+function mej(){
+ return `<h1>💡 Ideas de mejora</h1><p class="m">Apunta ideas según la vayas usando y marca las ya implementadas.</p>${[...S.mej].sort((a,b)=>(a.ok?1:0)-(b.ok?1:0)).map(m=>`<div class="c" style="${m.ok?'opacity:.6':''}"><label class="ck"><input type="checkbox" ${m.ok?'checked':''} onchange="updr('mej','${m.id}','ok',this.checked)">${m.ok?'Implementada':'Pendiente'}</label><textarea rows="${Math.max(2,String(m.t).split('\n').length+1)}" onchange="upd('mej','${m.id}','t',this.value)">${e(m.t)}</textarea><button class="b" onclick="del('mej','${m.id}')">Borrar</button></div>`).join('')}<button class="b p" style="width:100%" onclick="add('mej',{t:'',ok:false})">+ Nueva idea</button>`;
+}
+function ayuda(){
+ const D=(t,b)=>`<details class="c"><summary><b>${t}</b></summary>${b}</details>`;
+ return `<h1>Ayuda</h1>${D('Cómo empezar','<p>1) Rellena la <b>Ficha médica</b> y <b>Mi medicación</b> (Más). 2) Cada día, en <b>Hoy</b>, toca cómo te encuentras y lo que hayas hecho: son unos segundos. 3) Antes de ir al médico, abre <b>Informe</b>.</p>')}
+ ${D('Hoy','<p>Todo se guarda al tocar. Para corregir otro día, cambia la fecha de arriba. La medicación se da por tomada: solo marca lo que se te olvide. Si no registras un día, no pasa nada.</p>')}
+ ${D('Medidas','<p>Apunta el peso, la tensión o el oxígeno solo cuando los midas. En tensión y oxígeno indica si fue en reposo o tras ejercicio. El pulso es opcional.</p><p><b>Gráficas:</b> el peso tiene una; la tensión tiene tres (alta, baja y pulso) y el oxígeno dos (saturación y pulso). Cada una lleva su leyenda debajo. La <b>línea de puntos</b> es la media móvil (promedio de las últimas 3 medidas): enseña la tendencia sin que un día aislado despiste.</p><p><b>Franjas de colores:</b> en tensión, verde = óptima, verde claro = normal, amarillo = normal-alta, naranja = alta y rojo = muy alta. En oxígeno, verde = normal (95 o más), amarillo = vigilar (90-94) y rojo = peligro (menos de 90). En el pulso se marca la franja normal en reposo (60-100). Son referencias generales: si tu médico o neumólogo te ha fijado otros objetivos, valen los suyos. Si te sale en rojo y te encuentras mal, pide ayuda médica.</p>')}
+ ${D('Consultas','<p>Para apuntar una duda, elige primero el médico y escribe la pregunta debajo. Apunta dudas según se te ocurran y márcalas al resolverlas; las no resueltas pasan a la siguiente visita. Tras la consulta, apunta qué dijo el médico en <b>Visitas</b>.</p>')}
+ ${D('Informe en PDF','<p>Elige el médico y el periodo (últimos días, desde una fecha o desde la última visita), escribe qué quieres sacar de la visita y pulsa <b>Guardar PDF</b>. En “Qué incluir” puedes quitar o añadir apartados.</p><p>En el apartado de medidas, el informe separa <b>Peso</b>, <b>Tensión</b> y <b>Oxígeno</b> (cada uno con su título subrayado), muestra sus gráficas del periodo elegido y lista las medidas sin cortarlas a mitad.</p>')}
+ ${D('Ajustes','<p>En Más → Ajustes puedes cambiar los médicos, activar o desactivar síntomas y editar tus deportes. Si un síntoma deja de interesarte, mejor desactívalo que borrarlo: borrado deja de salir en los informes.</p>')}
+ ${D('Importante: copia de seguridad','<p>Los datos se guardan solo en este dispositivo (IndexedDB). Conecta Drive en <b>Más → Copia de seguridad</b>: la app te propondrá subir una copia cifrada cuando haga falta (cada cuánto se ajusta ahí mismo) y basta un toque. Las copias van cifradas con tu contraseña de copias: sin ella nadie puede leerlas, ni en Drive.</p><p>En iPhone, instala la app en la pantalla de inicio (Compartir → Añadir a pantalla de inicio): así Safari no borra sus datos aunque no la abras en semanas.</p>')}`;
+}
+function copia(){
+ const leg=META.legacy==='diff'?`<div class="c warn"><h2>Datos antiguos guardados aparte</h2><p class="m">En este navegador queda una copia de la época en que la app guardaba en localStorage y tiene cosas que no están en tus datos actuales (casi siempre es una copia más vieja). La app no la usa y no se ha tocado. Descárgala por si acaso y después bórrala.</p><div class="btns"><button onclick="legDl()">⬇️ Descargarla</button><button onclick="legDel()">🗑 Borrarla</button></div></div>`:'';
+ const bad=copiaOk(S)?'':`<div class="c warn"><b>⚠️ Aviso:</b> algún dato no tiene el formato esperado. Las copias se hacen igual, pero si al restaurar una te dice que no es válida, guarda el archivo y avísame. No se ha tocado nada.</div>`;
+ return `<h1>Copia de seguridad</h1>${leg}${bad}<div class="c"><div id="drvBox">${drvUI()}</div><p class="m" id="bkInfo">${bkInfoTxt()}</p>
+ <div class="r"><label class="m">Proponer copia si pasan (meses)<input type="number" min="1" max="24" inputmode="numeric" value="${+S.bk.m||1}" onchange="bkSet('m',this.value)"></label><label class="m">…o si hay (cambios sin copia)<input type="number" min="1" max="999" inputmode="numeric" value="${+S.bk.c||1}" onchange="bkSet('c',this.value)"></label></div>
+ <button class="b" style="width:100%" onclick="exportar()">📤 Descargar copia sin cifrar (JSON)</button>
+ <details><summary class="m">¿No se deja elegir el archivo? Pega aquí el contenido de una copia .json</summary><textarea id="pj" rows="4"></textarea><button class="b" onclick="impt($('#pj').value)">Restaurar desde el texto</button></details>
+ <p class="m">Restaurar sustituye los datos, pero antes comprueba la copia entera y descarga una copia de lo que tienes. Sirve también para las copias .json de la versión 1.2. No uses «Borrar datos de sitios» con github.io (borraría todas tus apps) y, al desinstalar la app en un ordenador, no marques «Borrar también los datos».</p></div>`;
+}
+const bkSet=(k,v)=>{S.bk[k]=Math.max(1,Math.min(k=='m'?24:999,parseInt(v)||1));save();toast('Guardado')};
+async function impt(t){if(!String(t||'').trim())return;let h=null;try{const c=await spGet();h=c&&c.bp}catch(x){}const r=await spRestoreFile(new Blob([t]),h);if(r&&r.ok){const x=$('#pj');if(x)x.value=''}}
+async function exportar(){const now=new Date().toISOString();dl(new Blob([JSON.stringify({app:APP,ver:VER,v:1,date:now,data:await spData()},null,1)],{type:'application/json'}),FN+'_v'+VER+'_completa_abierta_'+now.slice(0,10)+'.json');await spDone(now);toast('Copia descargada (sin cifrar: guárdala en sitio seguro)',3500)}
+/* copia antigua de localStorage («sd1», de antes de IndexedDB) */
+function legDl(){let raw=null;try{raw=localStorage.getItem(K)}catch(x){}if(raw==null){META.legacy=null;metaSave();render();return}dl(new Blob([raw],{type:'application/json'}),FN+'_datos_antiguos_localStorage_'+today()+'.json');META.legDl=1;metaSave()}
+async function legDel(){if(!META.legDl&&!confirm('Aún no la has descargado. ¿Borrarla de todos modos?'))return;if(!confirm('¿Borrar la copia antigua de localStorage? Tus datos actuales no cambian.'))return;try{localStorage.removeItem(K)}catch(x){}META.legacy=null;await metaSave();render();toast('Copia antigua borrada')}
 
+/* ---------- Validación estricta de una copia (2.0 o 1.2) antes de restaurarla ----------
+   Lo que va dentro de onclick/HTML (ids, fechas, números) tiene que tener su formato: así una copia manipulada no puede meter código. */
+function copiaOk(d){
+ const isO=x=>!!x&&typeof x=='object'&&!Array.isArray(x),F=/^\d{4}-\d{2}-\d{2}$/,ID=/^[A-Za-z0-9_-]{1,40}$/;
+ const str=x=>x==null||typeof x=='string',sc=x=>x==null||['string','number','boolean'].includes(typeof x),num=x=>x==null||x===''||(typeof x!='boolean'&&!isO(x)&&!Array.isArray(x)&&Number.isFinite(+x));
+ const fo=x=>x==null||x===''||(typeof x=='string'&&F.test(x)),id=x=>(typeof x=='string'||typeof x=='number')&&ID.test(String(x)),oid=x=>x==null||x===''||id(x);
+ const L=(a,fn)=>a==null||(Array.isArray(a)&&a.every(x=>isO(x)&&id(x.id)&&fn(x))),n15=x=>x==null||x===''||(Number.isInteger(+x)&&+x>=1&&+x<=5&&typeof x!='boolean');
+ if(!isO(d)||!d.v||!isO(d.dias))return false;
+ if(d.ficha!=null&&(!isO(d.ficha)||!Object.values(d.ficha).every(str)||!fo(d.ficha.nac)))return false;
+ if(!L(d.specs,x=>str(x.n)))return false;
+ if(!L(d.meds,x=>[x.n,x.dosis,x.motivo,x.nota].every(str)&&oid(x.esp)&&fo(x.desde)&&fo(x.hasta)&&sc(x.act)&&sc(x.dia)))return false;
+ if(!L(d.pregs,x=>str(x.t)&&str(x.r)&&oid(x.esp)&&sc(x.ok)))return false;
+ if(!L(d.vis,x=>oid(x.esp)&&fo(x.f)&&[x.d,x.c,x.p].every(str)))return false;
+ if(!L(d.citas,x=>oid(x.esp)&&fo(x.f)&&(!x.h||/^\d{2}:\d{2}$/.test(x.h))&&str(x.t)))return false;
+ if(!L(d.medidas,x=>['peso','ten','sat'].includes(x.t)&&fo(x.f)&&x.f&&[x.v1,x.v2,x.v3,x.ts].every(num)&&str(x.c)))return false;
+ if(!L(d.segs,x=>str(x.n)&&sc(x.on)))return false;
+ if(!L(d.acts,x=>str(x.n)&&num(x.m)))return false;
+ if(!L(d.mej,x=>str(x.t)&&sc(x.ok)))return false;
+ if(!str(d.exp)||(d.bk!=null&&(!isO(d.bk)||!num(d.bk.m)||!num(d.bk.c))))return false;
+ for(const k in d.dias){const v=d.dias[k];if(!F.test(k)||!isO(v))return false;
+  if(!n15(v.b)||!str(v.nota)||!num(v.h)||(v.cpap!=null&&!['t','p','n'].includes(v.cpap)))return false;
+  if(['act','nomed'].some(a=>v[a]!=null&&!(Array.isArray(v[a])&&v[a].every(id))))return false;
+  if(v.seg!=null&&(!isO(v.seg)||!Object.entries(v.seg).every(([a,b])=>ID.test(a)&&n15(b))))return false}
+ return true}
+
+/* ---------- Copia en Drive: enganches del bloque SP (sección 5 del MD) ---------- */
+let _toT;function toast(m,ms){const t=$('#toast');clearTimeout(_toT);if(!m){t.classList.remove('on');return}t.textContent=m;t.classList.add('on');_toT=setTimeout(()=>t.classList.remove('on'),Math.min(ms||2500,8000))}
+function show(html){$('#shBody').innerHTML=html;$('#sh').classList.add('show')}
+function closeSh(){const b=$('#shBody');b.querySelectorAll('input').forEach(i=>i.value='');b.innerHTML='';$('#sh').classList.remove('show');DX=null}
+const hayDatos=()=>Object.keys(S.dias).length>0||S.medidas.length>0||S.meds.length>0||S.pregs.length>0||S.vis.length>0||S.citas.length>0;
+function bkInfoTxt(){return'Última copia: '+(META.lastBackup?new Date(META.lastBackup).toLocaleDateString('es-ES'):'nunca')+' · cambios desde entonces: '+(META.changes||0)}
+function bkNeed(){if(BLOQ||!hayDatos()||META.snooze===today())return'';if(!META.lastBackup)return'Aún no has hecho ninguna copia de seguridad con esta versión.';
+ const L=new Date(META.lastBackup);L.setMonth(L.getMonth()+(+S.bk.m||1));if(L<=new Date())return'Tu última copia es del '+new Date(META.lastBackup).toLocaleDateString('es-ES')+'.';
+ if((META.changes||0)>=(+S.bk.c||1))return'Hay '+META.changes+' cambio'+(META.changes>1?'s':'')+' sin copia desde el '+new Date(META.lastBackup).toLocaleDateString('es-ES')+'.';return''}
+function bkAviso(){const w=bkNeed();if(!w||$('#sh').classList.contains('show'))return;
+ show('<h3>💾 Copia de seguridad</h3><p class="mu">'+e(w)+' Incluye el diario, las medidas, las consultas, la ficha y las ideas.</p><div class="btns">'+(spOn()?'<button onclick="closeSh();drvUp()">☁️ Subir a Drive</button>':'<button onclick="closeSh();tab=\'mas\';sub=\'copia\';render();drvConn()">☁️ Conectar con Drive</button>')+'<button onclick="closeSh();expSp()">🔐 Descargar cifrada</button><button onclick="META.snooze=today();metaSave();closeSh()">Hoy no</button></div><p class="mu">Puedes cambiar cada cuánto aparece en Más → Copia de seguridad.</p>')}
+async function spData(){return JSON.parse(JSON.stringify(S))}
+function spValid(d){return copiaOk(d)}
+async function spHas(){return hayDatos()}
+async function spApply(d){ /* solo tras leer, descifrar y validar la copia entera y descargar la copia previa */
+ if(BLOQ)throw new Error('solo lectura');if(!copiaOk(d))throw new Error('copia no válida');
+ const nv=Object.assign(defS(),JSON.parse(JSON.stringify(d)));nv.bk=Object.assign({m:1,c:1},nv.bk||{});
+ if(!(await kvPut('S',nv)))throw new Error('No se pudo guardar');const back=await kvGet('S');
+ if(!back||JSON.stringify(back)!==JSON.stringify(nv))throw new Error('La copia no se guardó bien');
+ S=nv;cur=today();curAuto=true;tab='hoy';sub='';mv='';render()}
+async function spDone(now){META.lastBackup=now;META.changes=0;
+ if(META.legacy==='eq'){try{localStorage.removeItem(K)}catch(x){}META.legacy=null} /* libera la copia vieja de localStorage (solo la de esta app y solo si ya está toda en tus datos) */
+ await metaSave();const b=$('#bkInfo');if(b)b.textContent=bkInfoTxt()}
+
+/* ---------- Arranque ---------- */
+let BOOTERR='';
+/* ¿todo lo de la copia antigua está ya en los datos actuales? (mismos días, medidas, consultas…) */
+function contenido(q,s){try{const ids=a=>new Set((a||[]).map(x=>x.id));
+ return Object.keys(q.dias||{}).every(k=>s.dias&&s.dias[k])&&['meds','pregs','vis','citas','medidas','mej'].every(c=>{const h=ids(s[c]);return(q[c]||[]).every(x=>h.has(x.id))})}catch(x){return false}}
+async function arrancar(){
+ try{db=await idb()}catch(x){db=null;BOOTERR=`<div class="c warn"><h2>No se pudo abrir la base de datos</h2><p>${e(x&&x.message||x)}</p><p class="m">No se ha tocado nada de tus datos. Cierra otras pestañas o ventanas de la app y vuelve a abrirla.</p></div>`;render();return}
+ const m=await kvGet('meta');if(m)META=Object.assign(META,m);
+ let raw=null;try{raw=localStorage.getItem(K)}catch(x){}
+ let s=await kvGet('S');
+ if(s){if(raw==null)META.legacy=null;else if(!META.legacy){let q=null;try{q=JSON.parse(raw)}catch(x){}META.legacy=q&&contenido(q,s)?'eq':'diff'}}
+ else if(raw!=null){ /* datos solo en localStorage (versiones antiguas o navegador sin IndexedDB): se pasan y se comprueban */
+  let q=null;try{q=JSON.parse(raw)}catch(x){}
+  if(!q||!q.v){BLOQ=true;BOOTERR=`<div class="c warn"><h2>Los datos antiguos están dañados</h2><p>No se pueden leer los datos guardados en este navegador. No se ha tocado nada.</p><button class="b" onclick="legDl()">⬇️ Descargarlos tal cual</button></div>`;render();return}
+  const ok=await kvPut('S',q),back=ok?await kvGet('S'):null;
+  if(!back||JSON.stringify(back)!==JSON.stringify(q)){BLOQ=true;BOOTERR=`<div class="c warn"><h2>No se pudieron pasar tus datos a la base nueva</h2><p>No se ha tocado nada (siguen en el navegador). Avísame antes de seguir.</p><button class="b" onclick="legDl()">⬇️ Descargarlos</button></div>`;render();return}
+  s=q;META.legacy='eq';META.mig=new Date().toISOString()}
+ if(s)S=Object.assign(defS(),s);
+ S.bk=Object.assign({m:1,c:1},S.bk||{});
+ if(!META.lastBackup&&S.exp){const d=new Date(S.exp);if(!isNaN(d))META.lastBackup=d.toISOString()}
+ await metaSave();
+ INIT=false;render();setTimeout(bkAviso,900);
+ try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(x){}
+}
+/* Al volver a la app otro día, «Hoy» pasa al día nuevo (la 1.2 se quedaba en el día anterior si la app seguía abierta) */
+function diaNuevo(){if(!curAuto||cur===today()||BLOQ||!db)return;const a=document.activeElement;if(a&&a.tagName=='TEXTAREA')return;notaFlush();cur=today();if(tab=='hoy'&&!$('#sh').classList.contains('show'))render()}
+document.addEventListener('visibilitychange',()=>{if(document.hidden){notaFlush();const a=document.activeElement;if(a&&/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)&&a.type!='file')a.blur()}else diaNuevo()});
+window.addEventListener('pagehide',notaFlush);
+setInterval(diaNuevo,60000);
+document.getElementById('sh').addEventListener('click',ev=>{if(ev.target.id==='sh')closeSh()});
+if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol))navigator.serviceWorker.register('sw.js').catch(()=>{});
+arrancar();
+
+/* SP:inicio · Seguridad solo para el puente de Drive (ver «Seguridad solo para el puente.MD»)
+   - Sin contraseña maestra, sin bloqueo, sin huella al entrar.
+   - Dirección + clave del puente + contraseña de copias se guardan CIFRADAS con una clave del
+     dispositivo AES-GCM NO EXTRAÍBLE (CryptoKey guardada en una base IndexedDB propia).
+   - Las copias que van a Drive salen cifradas (.gdc, mismo formato que la Fase 1).
+   - La huella (opcional) solo se pide para VER/CAMBIAR la conexión o BORRAR copias de Drive. */
+const SPX='ds',DAPP='diariosalud',MG='DSENC1\n';        // ← Diario de salud: prefijo ds, carpeta Apps/Backups/diariosalud, cabecera DSENC1
+const SPL=SPX+'_pte',SPDB=SPX+'_pte_db';
+const te=new TextEncoder(),td=new TextDecoder(),CH=4194304,IT=250000,PART=3145728,SPAD=te.encode(SPX+'/pte/v1'),PUV=/^https:\/\/script\.google\.com\/(a\/macros\/[\w.-]+\/|macros\/)s\/[\w-]+\/exec$/;
+const b64=u=>{let s='';u=new Uint8Array(u);for(let i=0;i<u.length;i+=8192)s+=String.fromCharCode(...u.subarray(i,i+8192));return btoa(s)},ub64=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0)),rnd=n=>crypto.getRandomValues(new Uint8Array(n)),u32=n=>{const a=new Uint8Array(4);new DataView(a.buffer).setUint32(0,n);return a},rd32=u=>new DataView(u.buffer,u.byteOffset).getUint32(0);
+const hex=u=>[...new Uint8Array(u)].map(b=>b.toString(16).padStart(2,'0')).join(''),sleep=ms=>new Promise(r=>setTimeout(r,ms)),sha=async s=>hex(await crypto.subtle.digest('SHA-256',te.encode(s)));
+const kdf=async(p,s,it)=>crypto.subtle.deriveKey({name:'PBKDF2',hash:'SHA-256',salt:s,iterations:it},await crypto.subtle.importKey('raw',te.encode(p),'PBKDF2',false,['deriveKey']),{name:'AES-GCM',length:256},false,['encrypt','decrypt']);
+const enc=async(k,d,n)=>{const iv=rnd(12);return{iv,ct:new Uint8Array(await crypto.subtle.encrypt({name:'AES-GCM',iv,additionalData:u32(n)},k,d))}},dcr=(k,iv,ct,n)=>crypto.subtle.decrypt({name:'AES-GCM',iv,additionalData:u32(n)},k,ct);
+const askPw=(t,two)=>new Promise(r=>{const d=document.createElement('div');d.style.cssText='position:fixed;inset:0;background:#000a;z-index:80;display:flex;align-items:center;justify-content:center;padding:16px';d.innerHTML=`<div class="shb"><b style="white-space:pre-wrap">${esc(t)}</b><input type="password" autocomplete="off" id="p1" placeholder="Contraseña">${two?'<input type="password" autocomplete="off" id="p2" placeholder="Repite la contraseña">':''}<div class="btns"><button id="ok">Aceptar</button><button id="no">Cancelar</button></div></div>`;document.body.appendChild(d);const f=d.querySelector('#p1'),x=v=>{d.querySelectorAll('input').forEach(i=>i.value='');d.remove();r(v)};f.focus();
+const go1=()=>{const v=f.value;if(!v)return;if(two&&v.length<8)return alert('Mínimo 8 caracteres.');if(two&&d.querySelector('#p2').value!==v)return alert('Las contraseñas no coinciden.');x(v)};d.querySelector('#no').onclick=()=>x(null);d.querySelector('#ok').onclick=go1;d.addEventListener('keydown',e=>{if(e.key==='Enter')go1()})});
+/* 1) clave del dispositivo: no extraíble; ni la propia app puede leer sus bytes, solo usarla */
+function spDb(){return new Promise((res,rej)=>{const r=indexedDB.open(SPDB,1);r.onupgradeneeded=()=>r.result.createObjectStore('k');r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})}
+async function spKey(create){const db=await spDb();try{let k=await new Promise((res,rej)=>{const q=db.transaction('k').objectStore('k').get('dev');q.onsuccess=()=>res(q.result||null);q.onerror=()=>rej(q.error)});
+if(!k&&create){k=await crypto.subtle.generateKey({name:'AES-GCM',length:256},false,['encrypt','decrypt']);await new Promise((res,rej)=>{const t=db.transaction('k','readwrite');t.objectStore('k').put(k,'dev');t.oncomplete=res;t.onerror=()=>rej(t.error)})}return k}finally{db.close()}}
+/* 2) conexión cifrada en localStorage[SPL] = {v,iv,ct,keep,last,cid}; ct = {u,k,bp} */
+let SP=(()=>{try{return JSON.parse(localStorage.getItem(SPL))||null}catch(e){return null}})(),SPC=null,DL=[],DX=null,DUP=0,DM='';
+const spOn=()=>!!(SP&&SP.ct),spSave=o=>{SP={...SP,...o};localStorage.setItem(SPL,JSON.stringify(SP))};
+async function spSet(c){const k=await spKey(true),iv=rnd(12),ct=new Uint8Array(await crypto.subtle.encrypt({name:'AES-GCM',iv,additionalData:SPAD},k,te.encode(JSON.stringify(c))));spSave({v:1,iv:b64(iv),ct:b64(ct)});SPC=c}
+async function spGet(){if(SPC)return SPC;if(!spOn())return null;const k=await spKey(false);if(!k)throw'lost';try{SPC=JSON.parse(td.decode(await crypto.subtle.decrypt({name:'AES-GCM',iv:ub64(SP.iv),additionalData:SPAD},k,ub64(SP.ct))))}catch(e){throw'lost'}return SPC}
+const spLost=()=>alert('No se pudo leer la conexión con Drive de este móvil (¿se borraron los datos del navegador?). Vuelve a conectar con la dirección, la clave y la contraseña de copias. Tus datos no han cambiado.');
+/* 3) autorización para cambios: huella si se activó; si no, o si falla, la contraseña de copias */
+async function spAuth(why){let c;try{c=await spGet()}catch(e){spLost();return null}if(!c)return null;
+if(SP.cid){try{await navigator.credentials.get({publicKey:{challenge:rnd(32),rpId:location.hostname,allowCredentials:[{type:'public-key',id:ub64(SP.cid)}],userVerification:'required',timeout:60000}});return c}catch(e){toast('Huella no disponible: usa la contraseña de copias',3000)}}
+const p=await askPw(why+'\n\nEscribe la contraseña de copias');if(p==null)return null;if(p!==c.bp){alert('Contraseña incorrecta.');return null}return c}
+async function spHuReg(){try{const cr=await navigator.credentials.create({publicKey:{challenge:rnd(32),rp:{name:APP,id:location.hostname},user:{id:rnd(16),name:SPX+'-puente',displayName:APP+' · puente'},pubKeyCredParams:[{type:'public-key',alg:-7},{type:'public-key',alg:-257}],authenticatorSelection:{authenticatorAttachment:'platform',residentKey:'preferred',userVerification:'required'},timeout:60000}});spSave({cid:b64(cr.rawId)});render();toast('Huella activada para los cambios del puente')}catch(e){toast('No se pudo activar la huella: se usará la contraseña de copias',3000)}}
+async function spHuella(){if(await spAuth('Activar la huella para el puente'))await spHuReg()}
+function spHuOff(){if(confirm('¿Dejar de pedir la huella? Los cambios se autorizarán con la contraseña de copias.')){spSave({cid:null});render()}}
+/* 4) copias cifradas (.gdc, idéntico a la Fase 1) */
+async function encBlob(bl,p,meta){const s=rnd(16),k=await kdf(p,s,IT),h=te.encode(JSON.stringify({app:APP,ver:VER,salt:b64(s),it:IT,ch:CH,date:new Date().toISOString(),...meta})),parts=[te.encode(MG),u32(h.length),h];let n=0;const w=async d=>{const{iv,ct}=await enc(k,d,n++);parts.push(u32(ct.length),iv,ct)};for(let i=0;i<bl.size;i+=CH)await w(new Uint8Array(await bl.slice(i,i+CH).arrayBuffer()));await w(te.encode('GD-FIN'));return new Blob(parts)}
+async function decFile(f,ask){let o=MG.length;const rd=async n=>{const u=new Uint8Array(await f.slice(o,o+n).arrayBuffer());if(u.length<n)throw'trunc';o+=n;return u},h=JSON.parse(td.decode(await rd(rd32(await rd(4)))));const p=await ask();if(p==null)return null;const k=await kdf(p,ub64(h.salt),h.it),out=[];let n=0;for(;;){const l=rd32(await rd(4)),iv=await rd(12),ct=await rd(l);let d;try{d=new Uint8Array(await dcr(k,iv,ct,n++))}catch(e){throw'pw'}if(o>=f.size){if(td.decode(d)!=='GD-FIN')throw'trunc';break}out.push(d)}return new Blob(out)}
+const isGdc=async f=>td.decode(new Uint8Array(await f.slice(0,MG.length).arrayBuffer()))===MG;
+const dl=(bl,name)=>{const u=URL.createObjectURL(bl),a=document.createElement('a');a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),6e4)};
+async function spPack(p,pre){const now=new Date().toISOString(),bl=await encBlob(new Blob([JSON.stringify({app:APP,ver:VER,v:1,date:now,data:await spData()})],{type:'application/json'}),p,{full:true});return{bl,now,name:`${FN}_v${VER}_${pre?'PREVIA_':''}completa_cifrada_${now.slice(0,10)}.gdc`}}
+/* abrir y restaurar una copia (.gdc o .json); nunca borra nada antes de leer y validar la copia entera */
+async function spRestoreFile(f,hint){let o,used=null;try{if(await isGdc(f)){const ask=async t=>{used=await askPw(t);return used};let bl;
+try{bl=await decFile(f,hint?async()=>{used=hint;return hint}:()=>ask('Contraseña de copias con la que se hizo esta copia'))}catch(er){if(er==='pw'&&hint)bl=await decFile(f,()=>ask('La contraseña de copias guardada no abre esta copia. Escribe la contraseña con la que se hizo'));else throw er}if(!bl)return null;o=JSON.parse(await bl.text())}else o=JSON.parse(await f.text())}
+catch(er){alert(er==='pw'?'Contraseña incorrecta o copia dañada. No se ha tocado nada.':er==='trunc'?'La copia está incompleta. No se ha tocado nada.':'El archivo no es una copia válida. No se ha tocado nada.');return null}
+if(o&&o.app&&!APPS.includes(o.app)){alert('Esta copia es de otra app («'+o.app+'»). No se ha tocado nada.');return null}
+const data=o&&o.app&&'data' in o?o.data:o;if(!spValid(data)){alert('La copia no tiene datos reconocibles de esta app. No se ha tocado nada.');return null}
+if(!confirm(`Copia${o.date?' del '+new Date(o.date).toLocaleString('es-ES'):''}.\n\nEsto sustituirá los datos actuales de esta app. ¿Continuar?`))return null;
+if(await spHas()){const p=used||(SPC&&SPC.bp);let ok=false;try{if(p){const r=await spPack(p,1);dl(r.bl,r.name);ok=true}else ok=await spPrevOpen()}catch(e){ok=false}
+if(!ok){alert('No se pudo guardar la copia previa. No se ha tocado nada.');return null}if(!confirm('Se ha descargado una copia previa de tus datos actuales. ¿Continuar con la restauración?'))return null}
+await spApply(data);toast('Copia restaurada',3000);return{ok:1,pw:used}}
+async function spPrevOpen(){if(!confirm('No hay contraseña de copias para cifrar la copia previa: se descargará EN ABIERTO. Guárdala en un sitio seguro. ¿Seguir?'))return false;const now=new Date().toISOString();dl(new Blob([JSON.stringify({app:APP,ver:VER,v:1,date:now,data:await spData()})],{type:'application/json'}),`${FN}_v${VER}_PREVIA_completa_abierta_${now.slice(0,10)}.json`);return true}
+async function impSp(e){const f=e.target.files[0];e.target.value='';if(!f)return;let h=null;try{const c=await spGet();h=c&&c.bp}catch(x){}await spRestoreFile(f,h)}
+async function expSp(){let c;try{c=await spGet()}catch(e){return spLost()}let p=c&&c.bp;if(!p){p=await askPw('Contraseña para cifrar esta copia (apúntala)',1);if(!p)return}const r=await spPack(p);dl(r.bl,r.name);await spDone(r.now);toast('Copia cifrada descargada')}
+/* 5) protocolo con el puente (idéntico a la Fase 2: POST firmado con HMAC; la clave nunca viaja) */
+const hmac=async(k,m)=>hex(await crypto.subtle.sign('HMAC',await crypto.subtle.importKey('raw',te.encode(k),{name:'HMAC',hash:'SHA-256'},false,['sign']),te.encode(m)));
+async function drvCall(c,a,pr,d){if(!PUV.test(c.u))throw'url';const ts=Date.now(),n=hex(rnd(16)),ps=JSON.stringify(pr||{}),dh=d?await sha(d):'',s=await hmac(c.k,['1',a,DAPP,ts,n,ps,dh].join('|'));let r,j;
+try{r=await fetch(c.u,{method:'POST',body:JSON.stringify({v:1,a,app:DAPP,ts,n,ps,d:d||'',s}),redirect:'follow',credentials:'omit',referrerPolicy:'no-referrer',cache:'no-store'})}catch(e){throw'net'}
+try{j=await r.json()}catch(e){throw'resp'}if(!j||!j.ok){DM=(j&&j.m)||'';throw(j&&j.e)||'int'}return j}
+async function drvTry(c,a,pr,d){for(let t=0;;t++){try{return await drvCall(c,a,pr,d)}catch(e){if((e==='net'||e==='resp'||e==='busy')&&t<2){await sleep(1500*(t+1));continue}throw e}}}
+const drvErr=e=>typeof e!=='string'?'Error: '+((e&&e.message)||e):({url:'La dirección del puente no es válida (debe ser https://script.google.com/…/exec).',net:'Sin conexión, o la dirección del puente no responde.',resp:'El puente no devolvió una respuesta válida. Revisa que la dirección termina en /exec y que la implementación es para «Cualquier usuario».',auth:'La clave del puente no coincide con la propiedad SECRET de Apps Script.',ts:'La hora del móvil no coincide con la de Google: activa la fecha y hora automáticas.',rep:'Petición repetida: inténtalo otra vez.',nosecret:'Al puente le falta la propiedad SECRET (o tiene menos de 16 caracteres).',busy:'El puente está ocupado: inténtalo en un minuto.',big:'Trozo demasiado grande para el puente.',app:'Nombre de carpeta no válido.',nf:'No se encontró esa copia en Drive.',sz:'Un trozo llegó incompleto: inténtalo otra vez.',miss:'La copia en Drive está incompleta: inténtalo otra vez.'}[e]||'Error del puente ('+e+(DM?': '+DM:'')+')');
+async function drvPutBlob(c,bl,name,now){const t=new Date(now),z=n=>String(n).padStart(2,'0'),id=`${t.getFullYear()}-${z(t.getMonth()+1)}-${z(t.getDate())}_${z(t.getHours())}-${z(t.getMinutes())}-${z(t.getSeconds())}_v${String(VER).replace(/[^0-9A-Za-z]/g,'-')}_completa`,tot=Math.max(1,Math.ceil(bl.size/PART));
+for(let i=0;i<tot;i++){toast(`Subiendo a Drive… ${i+1} de ${tot}`,6e4);const pt=bl.slice(i*PART,(i+1)*PART);await drvTry(c,'put',{id,i:i+1,sz:pt.size},b64(new Uint8Array(await pt.arrayBuffer())))}
+await drvTry(c,'fin',{id,total:tot,size:bl.size,name,keep:(SP&&SP.keep)||10});return id}
+async function drvGetBlob(c,it){const ps=[];for(let i=1;i<=it.t;i++){toast(`Descargando de Drive… ${i} de ${it.t}`,6e4);ps.push(ub64((await drvTry(c,'get',{id:it.id,i})).d))}const bl=new Blob(ps);if(bl.size!==it.s)throw'miss';return bl}
+/* 6) acciones de Drive. Subir NO pide nada */
+async function drvUp(){if(DUP)return toast('Ya hay una copia en curso');let c;try{c=await spGet()}catch(e){spLost();return drvConn()}if(!c)return drvConn();DUP=1;let wl=null;try{wl=navigator.wakeLock?await navigator.wakeLock.request('screen'):null}catch(e){}
+try{toast('Preparando copia…',6e4);const{bl,now,name}=await spPack(c.bp);await drvPutBlob(c,bl,name,now);spSave({last:now});await spDone(now);render();toast('Copia subida a Drive ✓',3000)}
+catch(e){toast('');alert('No se pudo subir la copia. Tus datos no han cambiado.\n'+drvErr(e))}finally{DUP=0;try{wl&&wl.release()}catch(e){}}}
+async function drvConn(){let c=null;if(spOn()){try{c=await spGet()}catch(e){c=null}if(c){c=await spAuth('Cambiar los datos del puente');if(!c)return}}
+show(`<h3>Conectar con Drive</h3><p class="mu">Copias en Apps/Backups/${DAPP}. Si ya tienes el puente de otra app, usa la misma dirección y clave.</p><label>Dirección del puente (termina en /exec)</label><input id="sp_u" inputmode="url" autocomplete="off" value="${esc(c?c.u:'')}" placeholder="https://script.google.com/macros/s/…/exec"><label>Clave del puente</label><input id="sp_k" type="password" autocomplete="off" placeholder="${c?'Guardada · vacía = no cambiarla':''}"><label>Contraseña de copias (cifra las copias · mínimo 8)</label><input id="sp_p" type="password" autocomplete="new-password" placeholder="${c?'Guardada · vacía = no cambiarla':''}"><input id="sp_p2" type="password" autocomplete="new-password" placeholder="Repite la contraseña de copias"><p class="mu">Apúntala: en un móvil nuevo, sin ella no se abren las copias. Puedes usar la misma en todas las apps. Nada de esto se muestra después ni viaja por la red.</p><div class="btns"><button onclick="drvSave()">Probar y guardar</button><button onclick="closeSh()">Cancelar</button></div>`)}
+async function drvSave(){const o=SPC||{},u=$('#sp_u').value.trim(),k=$('#sp_k').value.trim()||o.k||'',p=$('#sp_p').value,p2=$('#sp_p2').value,bp=p||o.bp||'';
+if(!PUV.test(u))return alert('La dirección debe ser la de la aplicación web: https://script.google.com/macros/s/…/exec');if(k.length<16)return alert('La clave del puente debe tener al menos 16 caracteres.');
+if(p&&p.length<8)return alert('La contraseña de copias debe tener al menos 8 caracteres.');if(p&&p!==p2)return alert('Las contraseñas de copias no coinciden.');if(!bp)return alert('Falta la contraseña de copias.');
+if(o.bp&&p&&p!==o.bp&&!confirm('Las copias que ya están en Drive (y las descargadas) seguirán necesitando la contraseña de copias ANTERIOR. ¿Cambiarla?'))return;
+toast('Probando conexión…',6e4);try{const j=await drvTry({u,k},'ping');await spSet({u,k,bp});if(!SP.keep)spSave({keep:10});closeSh();render();toast('Conectado · '+j.folder,3000);
+if(!SP.cid&&window.PublicKeyCredential&&confirm('¿Proteger con la huella los cambios de esta conexión?\n\nSolo se pedirá para cambiar los datos del puente o borrar copias de Drive. Nunca al entrar ni al subir copias.'))await spHuReg()}catch(e){toast('');alert(drvErr(e))}}
+async function drvTest(){let c;try{c=await spGet()}catch(e){return spLost()}if(!c)return;toast('Probando conexión…',6e4);try{const j=await drvTry(c,'ping');toast('');alert('Conexión correcta ✓\nCarpeta en Drive: '+j.folder)}catch(e){toast('');alert(drvErr(e))}}
+const drvKeep=v=>{spSave({keep:Math.max(2,Math.min(50,Math.floor(+v)||10))});toast('Guardado')};
+async function drvOff(){if(!confirm('¿Desconectar Drive de este móvil? Las copias que ya están en Drive no se borran y tus datos no cambian.'))return;if(spOn()&&!await spAuth('Desconectar Drive'))return;localStorage.removeItem(SPL);SP=null;SPC=null;render()}
+const drvAsk=()=>new Promise(r=>{const d=document.createElement('div');d.style.cssText='position:fixed;inset:0;background:#000a;z-index:80;display:flex;align-items:center;justify-content:center;padding:16px';d.innerHTML=`<div class="shb"><b>Datos del puente de Drive</b><input id="a_u" inputmode="url" autocomplete="off" placeholder="Dirección del puente (termina en /exec)"><input id="a_k" type="password" autocomplete="off" placeholder="Clave del puente"><div class="btns"><button id="ok">Continuar</button><button id="no">Cancelar</button></div></div>`;document.body.appendChild(d);const x=v=>{d.querySelectorAll('input').forEach(i=>i.value='');d.remove();r(v)};d.querySelector('#no').onclick=()=>x(null);d.querySelector('#ok').onclick=()=>{const u=d.querySelector('#a_u').value.trim(),k=d.querySelector('#a_k').value.trim();if(!PUV.test(u))return alert('La dirección debe empezar por https://script.google.com/ y terminar en /exec.');if(k.length<16)return alert('La clave del puente tiene al menos 16 caracteres.');x({u,k})}});
+async function drvList(){let c=null;if(spOn()){try{c=await spGet()}catch(e){spLost()}}if(!c){c=await drvAsk();if(!c)return}
+toast('Buscando copias…',6e4);try{const j=await drvTry(c,'list');DL=j.l||[];DX=c;toast('');drvShow()}catch(e){toast('');alert(drvErr(e))}}
+function drvShow(){const z=DL.map((it,i)=>`<div class="card"><b>${new Date(it.d).toLocaleString('es-ES')}</b> <span class="mu">${(it.s/1048576).toLocaleString('es-ES',{maximumFractionDigits:2})} MB</span><div class="btns"><button onclick="drvPick(${i})">Restaurar</button><button onclick="drvDel(${i})">🗑 Borrar</button></div></div>`).join('');
+show(`<h3>Copias en Drive</h3><p class="mu">Apps/Backups/${DAPP} · las más recientes primero</p>${z||'<p class="mu">No hay copias en Drive.</p>'}<div class="btns"><button onclick="DX=null;closeSh()">Cerrar</button></div>`)}
+async function drvPick(i){const it=DL[i],c=DX;if(!it||!c||DUP)return;DUP=1;closeSh();
+try{const bl=await drvGetBlob(c,it);toast('');const r=await spRestoreFile(bl,c.bp||null);
+if(r&&r.ok&&!spOn()&&r.pw&&confirm('¿Guardar en este móvil la conexión con Drive (con la contraseña de copias que acabas de usar)?')){await spSet({u:c.u,k:c.k,bp:r.pw});spSave({keep:10});render()}}
+catch(e){toast('');alert('No se pudo descargar la copia. No se ha tocado nada.\n'+drvErr(e))}finally{DUP=0;DX=null}}
+async function drvDel(i){const it=DL[i],c=DX;if(!it||!c)return;if(spOn()&&!await spAuth('Borrar una copia de Drive'))return;if(!confirm('¿Borrar esta copia de Drive? Va a la papelera de Drive (se puede recuperar unos 30 días).'))return;try{await drvTry(c,'del',{id:it.id});DL.splice(i,1);drvShow()}catch(e){alert(drvErr(e))}}
+const drvLast=()=>SP&&SP.last?new Date(SP.last).toLocaleString('es-ES'):'nunca';
+function drvUI(){return `<div class="card"><b>☁️ Copia en Drive (cifrada)</b>${spOn()?`<p class="mu">Conectado. Carpeta: Apps/Backups/${DAPP} · última subida: ${drvLast()} · cambios protegidos con ${SP.cid?'huella':'la contraseña de copias'}</p><div class="btns"><button onclick="drvUp()">☁️ Subir copia ahora</button><button onclick="drvList()">Ver copias y restaurar</button></div><label>Conservar en Drive las últimas (copias)</label><input type="number" min="2" max="50" inputmode="numeric" value="${SP.keep||10}" onchange="drvKeep(this.value)"><div class="btns"><button onclick="drvTest()">Probar conexión</button><button onclick="drvConn()">Cambiar datos</button>${SP.cid?'<button onclick="spHuOff()">Quitar huella</button>':'<button onclick="spHuella()">Usar huella para cambios</button>'}<button onclick="drvOff()">Desconectar</button></div>`:`<p class="mu">Sube copias cifradas a tu Drive (Apps/Backups/${DAPP}) sin contraseñas al entrar. La conexión se guarda cifrada en este móvil.</p><div class="btns"><button onclick="drvConn()">Conectar con Drive</button><button onclick="drvList()">Restaurar desde Drive (móvil nuevo)</button></div>`}<div class="btns"><button onclick="expSp()">🔐 Descargar copia cifrada</button></div><label>Restaurar desde un archivo (.gdc o .json)</label><input type="file" onchange="impSp(event)"></div>`}
+try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}
+/* SP:fin */
+</script></body></html>

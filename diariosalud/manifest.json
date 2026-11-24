@@ -1,0 +1,17 @@
+{
+  "name": "Diario de salud",
+  "short_name": "Diario salud",
+  "description": "Diario de cómo te encuentras, medidas (peso, tensión, oxígeno), preguntas y visitas al médico, e informe en PDF para la consulta.",
+  "id": "./",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f6f4ef",
+  "theme_color": "#2f7d6d",
+  "lang": "es",
+  "icons": [
+    {"src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any"},
+    {"src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any"},
+    {"src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
+  ]
+}
